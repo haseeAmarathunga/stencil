@@ -93,7 +93,7 @@ export function validateTesting(config: d.Config) {
     }
 
     testing.testMatch = [
-      `**/+(*.)+(${types.join('|')}).+(ts|tsx|js)?(x)`
+      `**/*(*.)+(${types.join('|')}).+(ts)?(x)`
     ];
   }
 
