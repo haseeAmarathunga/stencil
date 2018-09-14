@@ -74,6 +74,15 @@ function testPackage(testPkg) {
     ]
   },
   {
+    packageJson: '../screenshot/package.json',
+    files: [
+      'screenshot.connector.default.js'
+    ],
+    exports: [
+      'ScreenshotConnector'
+    ]
+  },
+  {
     packageJson: '../server/package.json',
     exports: [
       'h',
@@ -109,6 +118,7 @@ function testPackage(testPkg) {
       "dist/",
       "compiler/",
       "mock-doc/",
+      "screenshot/",
       "server/",
       "sys/",
       "testing/"
