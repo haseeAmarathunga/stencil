@@ -71,8 +71,30 @@ declare global {
        * received the correct custom event `detail` data.
        */
       toHaveReceivedEventDetail(eventDetail: any): void;
+
+      /**
+       * Used to evaluate the results of `compareScreenshot()`, such as
+       * `expect(compare).toMatchScreenshot()`. The `mismatch`
+       * value within the optional `opts` argument allows each test
+       * to provide an allowable mismatch value between `0` and `1`.
+       * Default `mismatch` option is `0.01`.
+       */
+      toMatchScreenshot(opts?: MatchScreenshotOptions): void;
     }
   }
+}
+
+
+export interface MatchScreenshotOptions {
+  /**
+   * A `mismatch` value of `0` means no pixels can be mismatched, and `0.1`
+   * means 10% of the pixels can have mismatched. Realistically, two screenshots
+   * representing the same content may have a small number of mismatched
+   * pixels due to anti-aliasing, which is perfectly normal. For this reason,
+   * the default `mismatch` value is `0.01`, which means that up to 1% of the
+   * pixels are ok to be mismatched.
+   */
+  mismatch?: number;
 }
 
 
@@ -133,9 +155,13 @@ export interface E2EProcessEnv {
   __STENCIL_BROWSER_URL__?: string;
   __STENCIL_LOADER_URL__?: string;
   __STENCIL_BROWSER_WS_ENDPOINT__?: string;
-  __STENCIL_SCREENSHOTS__?: 'true';
+
+  __STENCIL_SCREENSHOT__?: 'true';
+  __STENCIL_SCREENSHOT_UPDATE__?: 'true';
+  __STENCIL_SCREENSHOT_JOB_ID__?: string;
   __STENCIL_SCREENSHOT_IMAGES_DIR__?: string;
-  __STENCIL_SCREENSHOT_DATA_DIR__?: string;
+  __STENCIL_SCREENSHOT_MASTER_DATA_DIR__?: string;
+  __STENCIL_SCREENSHOT_LOCAL_DATA_DIR__?: string;
 
   __STENCIL_E2E_TESTS__?: 'true';
 
@@ -179,6 +205,12 @@ export interface TestingConfig {
    */
   emulate?: EmulateConfig[];
 
+  /**
+   * Directory path to where the screenshot master data should be saved.
+   * This directory would hold test data about each screenshot, not the
+   * screenshot images.
+   */
+  screenshotDir?: string;
 
   /**
    * This option tells Jest that all imported modules in your tests should be mocked automatically.

@@ -11,13 +11,13 @@ export class ScreenshotConnector implements d.ScreenshotConnector {
   snapshotDataDirName = 'snapshots';
   addGitIgnore = true;
 
-  results: d.E2ESnapshot;
+  results: any;
   rootDir: string;
   dataDir: string;
   imagesDir: string;
   snapshotDataDir: string;
 
-  async postSnapshot(results: d.E2ESnapshot) {
+  async postSnapshot(results: any) {
     this.results = results;
 
     await this.createDirs();
@@ -76,7 +76,7 @@ export class ScreenshotConnector implements d.ScreenshotConnector {
     const snapshotJsonFileName = `${this.results.id}.json`;
     const snapshotJsonFilePath = path.join(this.snapshotDataDir, snapshotJsonFileName);
 
-    const snapshotData: d.E2ESnapshot = {
+    const snapshotData: any = {
       id: this.results.id,
       msg: this.results.msg || '',
       repoUrl: this.results.repoUrl || '',
@@ -172,7 +172,7 @@ export class ScreenshotConnector implements d.ScreenshotConnector {
   }
 
   async getMasterSnapshot() {
-    let masterSnapshot: d.E2ESnapshot = null;
+    let masterSnapshot: any = null;
 
     try {
       const data = await this.getData();
@@ -202,7 +202,7 @@ export class ScreenshotConnector implements d.ScreenshotConnector {
       await this.writeFile(cachedFilePath, snapshotJsonContent);
     }
 
-    const parsedData: d.E2ESnapshot = JSON.parse(snapshotJsonContent);
+    const parsedData: any = JSON.parse(snapshotJsonContent);
     return parsedData;
   }
 
@@ -276,8 +276,8 @@ export class ScreenshotConnector implements d.ScreenshotConnector {
 
 }
 
-function formatSnapshotData(results: d.E2ESnapshot) {
-  const snapshotData: d.E2ESnapshot = {
+function formatSnapshotData(results: any) {
+  const snapshotData: any = {
     id: results.id,
     msg: results.msg || '',
     repoUrl: results.repoUrl || '',
@@ -286,7 +286,7 @@ function formatSnapshotData(results: d.E2ESnapshot) {
   return snapshotData;
 }
 
-function sortSnapshots(a: d.E2ESnapshot, b: d.E2ESnapshot) {
+function sortSnapshots(a: any, b: any) {
   if (a.timestamp > b.timestamp) return -1;
   if (a.timestamp < b.timestamp) return 1;
   return 0;

@@ -216,6 +216,7 @@ export interface ConfigFlags {
   spec?: boolean;
   ssr?: boolean;
   stats?: boolean;
+  updateScreenshot?: boolean;
   version?: boolean;
   watch?: boolean;
 }

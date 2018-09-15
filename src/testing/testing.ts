@@ -59,8 +59,8 @@ export class Testing implements d.Testing {
 
     const doScreenshots = !!(config.flags.e2e && config.flags.screenshot);
     if (doScreenshots) {
-      env.__STENCIL_SCREENSHOTS__ = 'true';
-      config.logger.info(config.logger.magenta(`generating screenshots`));
+      env.__STENCIL_SCREENSHOT__ = 'true';
+      config.logger.info(config.logger.magenta(`comparing screenshots`));
     }
 
     const jestEnvNodeModule = config.sys.lazyRequire.getModulePath('jest-environment-node');
@@ -98,7 +98,8 @@ export class Testing implements d.Testing {
     this.jestConfigPath = await setupJestConfig(config);
 
     try {
-      await runJest(config, this.jestConfigPath, doScreenshots);
+      await runJest(config, env, this.jestConfigPath, doScreenshots);
+
     } catch (e) {
       config.logger.error(e);
       return false;

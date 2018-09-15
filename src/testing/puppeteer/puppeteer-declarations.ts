@@ -20,6 +20,8 @@ type PuppeteerPage = Omit<puppeteer.Page,
  */
 export interface E2EPage extends PuppeteerPage {
 
+  compareScreenshot(unqiueDescription: string): Promise<d.ScreenshotCompare>;
+
   /**
    * Find an element that matches the selector, which is the same as
    * `document.querySelector(selector)`. Use `>>>` within the
@@ -82,7 +84,7 @@ export interface E2EPageInternal extends E2EPage {
   _events: WaitForEvent[];
   _eventIds: number;
   _goto(url: string, options?: Partial<puppeteer.NavigationOptions>): Promise<puppeteer.Response | null>;
-  _screenshot(options?: puppeteer.ScreenshotOptions): Promise<Buffer>;
+  screenshot(options?: puppeteer.ScreenshotOptions): Promise<Buffer>;
 }
 
 

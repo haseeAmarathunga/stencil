@@ -37,6 +37,15 @@ export function validateTesting(config: d.Config) {
     testing.rootDir = config.rootDir;
   }
 
+  if (typeof testing.screenshotDir === 'string') {
+    if (!path.isAbsolute(testing.screenshotDir)) {
+      testing.screenshotDir = path.join(config.rootDir, testing.screenshotDir);
+    }
+
+  } else {
+    testing.screenshotDir = path.join(config.rootDir, 'screenshot');
+  }
+
   if (!Array.isArray(testing.moduleFileExtensions)) {
     testing.moduleFileExtensions = DEFAULT_MODULE_FILE_EXTENSIONS;
   }

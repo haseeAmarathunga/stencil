@@ -26,6 +26,8 @@ if (success) {
         'net',
         'os',
         'path',
+        'pixelmatch',
+        'pngjs',
         'url'
       ],
       plugins: [

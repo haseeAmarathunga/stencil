@@ -1,26 +1,23 @@
 
-export interface E2EData {
-  masterSnapshotId: string;
-  snapshots: E2ESnapshot[];
-}
-
-
-export interface E2ESnapshot {
+export interface ScreenshotJob {
   id: string;
-  msg?: string;
-  repoUrl?: string;
-  imagesDir?: string;
-  dataDir?: string;
-  appRootDir?: string;
-  packageDir?: string;
-  timestamp: number;
-  screenshots?: E2EScreenshot[];
-  compilerVersion?: string;
-  channel?: string;
+  imagesDir: string;
+  localDataDir: string;
+  masterDataDir: string;
 }
 
 
-export interface E2EScreenshot {
+export interface ScreenshotCompare {
+  mismatch: number;
+  id?: string;
+  desc?: string;
+  expectedImage?: string;
+  receivedImage?: string;
+  isScreenshotCompare: boolean;
+}
+
+
+export interface ScreenshotData {
   id: string;
   desc: string;
   image: string;
@@ -36,13 +33,13 @@ export interface E2EScreenshot {
 
 
 export interface ScreenshotConnector {
-  deleteSnapshot(snapshotId: string): Promise<E2EData>;
-  getData(): Promise<E2EData>;
-  getMasterSnapshot(): Promise<E2ESnapshot>;
-  getSnapshot(snapshotId: string): Promise<E2ESnapshot>;
-  postSnapshot(snapshot: E2ESnapshot): Promise<void>;
+  deleteSnapshot(snapshotId: string): Promise<any>;
+  getData(): Promise<any>;
+  getMasterSnapshot(): Promise<any>;
+  getSnapshot(snapshotId: string): Promise<any>;
+  postSnapshot(snapshot: any): Promise<void>;
   readImage(imageFileName: string): any;
-  setMasterSnapshot(snapshotId: string): Promise<E2EData>;
+  setMasterSnapshot(snapshotId: string): Promise<any>;
 }
 
 
@@ -52,4 +49,47 @@ export interface ScreenshotServer {
   getCompareUrl(snapshotIdA: string, snapshotIdB: string): string;
   getSnapshotUrl(snapshotId: string): string;
   isListening(): boolean;
+}
+
+
+export interface ScreenshotOptions {
+  /**
+   * When true, takes a screenshot of the full scrollable page.
+   * @default false
+   */
+  fullPage?: boolean;
+
+  /**
+   * An object which specifies clipping region of the page.
+   */
+  clip?: ScreenshotBoundingBox;
+
+  /**
+   * Hides default white background and allows capturing screenshots with transparency.
+   * @default false
+   */
+  omitBackground?: boolean;
+}
+
+
+export interface ScreenshotBoundingBox {
+  /**
+   * The x-coordinate of top-left corner.
+   */
+  x: number;
+
+  /**
+   * The y-coordinate of top-left corner.
+   */
+  y: number;
+
+  /**
+   * The width in pixels.
+   */
+  width: number;
+
+  /**
+   * The height in pixels.
+   */
+  height: number;
 }
