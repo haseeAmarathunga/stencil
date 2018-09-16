@@ -1,9 +1,25 @@
 
-export interface ScreenshotJob {
-  id: string;
-  imagesDir: string;
-  localDataDir: string;
-  masterDataDir: string;
+export interface ScreenshotConnector {
+  init(opts: ScreenshotConnectorOptions): Promise<void>;
+  complete(): Promise<void>;
+  toJson(): string;
+}
+
+export interface ScreenshotConnectorOptions {
+  rootDir: string;
+  buildId?: string;
+  updateMaster?: boolean;
+}
+
+export interface ScreenshotBuild {
+  buildId: string;
+  rootDir: string;
+  screenshotDirPath: string;
+  imagesDirPath: string;
+  masterDirPath: string;
+  localDirPath: string;
+  updateMaster: boolean;
+  compareUrlTemplate: string;
 }
 
 
@@ -13,6 +29,7 @@ export interface ScreenshotCompare {
   desc?: string;
   expectedImage?: string;
   receivedImage?: string;
+  url?: string;
   isScreenshotCompare: boolean;
 }
 
@@ -29,17 +46,6 @@ export interface ScreenshotData {
   isLandscape?: boolean;
   isMobile?: boolean;
   mediaType?: string;
-}
-
-
-export interface ScreenshotConnector {
-  deleteSnapshot(snapshotId: string): Promise<any>;
-  getData(): Promise<any>;
-  getMasterSnapshot(): Promise<any>;
-  getSnapshot(snapshotId: string): Promise<any>;
-  postSnapshot(snapshot: any): Promise<void>;
-  readImage(imageFileName: string): any;
-  setMasterSnapshot(snapshotId: string): Promise<any>;
 }
 
 
@@ -69,6 +75,13 @@ export interface ScreenshotOptions {
    * @default false
    */
   omitBackground?: boolean;
+
+  /**
+   * Matching threshold, ranges from `0` to 1. Smaller values make the comparison
+   * more sensitive.
+   * @default 0.1
+   */
+  threshold?: number;
 }
 
 

@@ -23,35 +23,24 @@ export function initPageScreenshot(page: pd.E2EPageInternal) {
 
 
 export async function compareE2EScreenshot(page: pd.E2EPageInternal, uniqueDescription: string, opts: d.ScreenshotOptions = {}) {
-  const screenshotOpts = createPuppeteerScreenshopOptions(opts);
-  const screenshotBuf = await page.screenshot(screenshotOpts);
-
   const env = (process.env) as d.E2EProcessEnv;
-
-  if (typeof env.__STENCIL_SCREENSHOT_IMAGES_DIR__ !== 'string') {
-    throw new Error(`compareScreenshot, missing images directory env var`);
-  }
-
-  if (typeof env.__STENCIL_SCREENSHOT_MASTER_DATA_DIR__ !== 'string') {
-    throw new Error(`compareScreenshot, missing master data directory env var`);
-  }
-
-  if (typeof env.__STENCIL_SCREENSHOT_LOCAL_DATA_DIR__ !== 'string') {
-    throw new Error(`compareScreenshot, missing local data directory env var`);
-  }
 
   if (typeof env.__STENCIL_EMULATE__ !== 'string') {
     throw new Error(`compareScreenshot, missing screenshot emulate env var`);
   }
 
-  const imagesDir = env.__STENCIL_SCREENSHOT_IMAGES_DIR__;
-  const masterDataDir = env.__STENCIL_SCREENSHOT_MASTER_DATA_DIR__;
-  const localDataDir = env.__STENCIL_SCREENSHOT_LOCAL_DATA_DIR__;
-  const updateMasterScreenshot = (env.__STENCIL_SCREENSHOT_UPDATE__ === 'true');
+  if (typeof env.__STENCIL_SCREENSHOT_BUILD__ !== 'string') {
+    throw new Error(`compareScreenshot, missing screen build env var`);
+  }
+
+  const screenshotOpts = createPuppeteerScreenshopOptions(opts);
+  const screenshotBuf = await page.screenshot(screenshotOpts);
 
   const emulateConfig = JSON.parse(env.__STENCIL_EMULATE__) as d.EmulateConfig;
 
-  return compareScreenshot(screenshotBuf, emulateConfig, uniqueDescription, imagesDir, masterDataDir, localDataDir, updateMasterScreenshot);
+  const screenshotBuild = JSON.parse(env.__STENCIL_SCREENSHOT_BUILD__) as d.ScreenshotBuild;
+
+  return compareScreenshot(emulateConfig, screenshotBuild, screenshotBuf, uniqueDescription, opts.threshold);
 }
 
 

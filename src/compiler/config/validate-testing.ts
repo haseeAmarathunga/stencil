@@ -37,13 +37,15 @@ export function validateTesting(config: d.Config) {
     testing.rootDir = config.rootDir;
   }
 
-  if (typeof testing.screenshotDir === 'string') {
-    if (!path.isAbsolute(testing.screenshotDir)) {
-      testing.screenshotDir = path.join(config.rootDir, testing.screenshotDir);
+  if (typeof testing.screenshotConnector === 'string') {
+    if (!path.isAbsolute(testing.screenshotConnector)) {
+      testing.screenshotConnector = path.join(config.rootDir, testing.screenshotConnector);
     }
 
   } else {
-    testing.screenshotDir = path.join(config.rootDir, 'screenshot');
+    testing.screenshotConnector = config.sys.path.join(
+      config.sys.compiler.packageDir, 'screenshot', 'screenshot.connector.default.js'
+    );
   }
 
   if (!Array.isArray(testing.moduleFileExtensions)) {

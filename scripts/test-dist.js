@@ -76,7 +76,7 @@ function testPackage(testPkg) {
   {
     packageJson: '../screenshot/package.json',
     files: [
-      'screenshot.connector.default.js'
+      'screenshot-connector.js'
     ],
     exports: [
       'ScreenshotConnector'

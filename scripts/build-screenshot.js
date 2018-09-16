@@ -31,9 +31,7 @@ if (success) {
         'url'
       ],
       plugins: [
-        rollupResolve({
-          jsnext: true
-        }),
+        rollupResolve(),
         rollupCommonjs(),
       ],
       onwarn: (message) => {
@@ -69,7 +67,7 @@ if (success) {
 
 
   process.on('exit', () => {
-    // fs.removeSync(TRANSPILED_DIR);
+    fs.removeSync(TRANSPILED_DIR);
     console.log(`✅ screenshot`);
   });
 }

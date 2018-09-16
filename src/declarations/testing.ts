@@ -157,12 +157,7 @@ export interface E2EProcessEnv {
   __STENCIL_BROWSER_WS_ENDPOINT__?: string;
 
   __STENCIL_SCREENSHOT__?: 'true';
-  __STENCIL_SCREENSHOT_UPDATE__?: 'true';
-  __STENCIL_SCREENSHOT_JOB_ID__?: string;
-  __STENCIL_SCREENSHOT_IMAGES_DIR__?: string;
-  __STENCIL_SCREENSHOT_MASTER_DATA_DIR__?: string;
-  __STENCIL_SCREENSHOT_LOCAL_DATA_DIR__?: string;
-
+  __STENCIL_SCREENSHOT_BUILD__?: string;
   __STENCIL_E2E_TESTS__?: 'true';
 
   __STENCIL_PUPPETEER_MODULE__?: string;
@@ -206,11 +201,9 @@ export interface TestingConfig {
   emulate?: EmulateConfig[];
 
   /**
-   * Directory path to where the screenshot master data should be saved.
-   * This directory would hold test data about each screenshot, not the
-   * screenshot images.
+   * Path to the Screenshot Connector module.
    */
-  screenshotDir?: string;
+  screenshotConnector?: string;
 
   /**
    * This option tells Jest that all imported modules in your tests should be mocked automatically.

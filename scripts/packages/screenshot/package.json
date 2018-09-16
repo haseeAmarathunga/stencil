@@ -4,7 +4,6 @@
   "main": "./index.js",
   "types": "../dist/screenshot/index.d.ts",
   "files": [
-    "screenshot.connector.default.js",
-    "screenshot.server.default.js"
+    "screenshot-connector.js"
   ]
 }

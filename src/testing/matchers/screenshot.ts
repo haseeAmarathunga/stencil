@@ -25,7 +25,7 @@ export function toMatchScreenshot(compare: d.ScreenshotCompare, opts: d.MatchScr
   const pass = (compare.mismatch <= opts.mismatch);
 
   return {
-    message: () => `screenshot comparison has a mismatch of ${compare.mismatch} for screenshot "${compare.desc}", id: ${compare.id}`,
+    message: () => `screenshot comparison has a mismatch of ${compare.mismatch} for screenshot "${compare.desc}", ${compare.url}`,
     pass: pass,
   };
 }

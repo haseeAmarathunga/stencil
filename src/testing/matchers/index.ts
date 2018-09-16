@@ -20,4 +20,3 @@ export const expectExtend = {
   toHaveReceivedEventTimes,
   toMatchScreenshot
 };
-

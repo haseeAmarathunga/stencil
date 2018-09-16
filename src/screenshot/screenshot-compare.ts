@@ -1,13 +1,17 @@
 import * as d from '../declarations';
 import { getMismatchValue } from './pixel-match';
-import { readMasterScreenshotData, writeScreenshotData, writeScreenshotImage } from './screenshot-fs';
+import { readScreenshotData, writeScreenshotData, writeScreenshotImage } from './screenshot-fs';
 import crypto from 'crypto';
+import path from 'path';
 
 
-export async function compareScreenshot(screenshotBuf: Buffer, emulateConfig: d.EmulateConfig, uniqueDescription: string, imagesDir: string, masterDataDir: string, localDataDir: string, updateMasterScreenshot: boolean) {
-  // write the image to the images directory
-  // probably a temp directory
-  const imageName = await writeScreenshotImage(imagesDir, screenshotBuf);
+export async function compareScreenshot(emulateConfig: d.EmulateConfig, screenshotBuild: d.ScreenshotBuild, screenshotBuf: Buffer, uniqueDescription: string, threshold: number) {
+  const hash = crypto.createHash('md5').update(screenshotBuf).digest('hex');
+  const imageName = `${hash}.png`;
+  const imagePath = path.join(screenshotBuild.imagesDirPath, imageName);
+
+  // write our image
+  await writeScreenshotImage(imagePath, screenshotBuf);
 
   // create the data we'll be saving as json
   // the "id" is what we use as a key to compare to sets of data
@@ -34,50 +38,55 @@ export async function compareScreenshot(screenshotBuf: Buffer, emulateConfig: d.
     expectedImage: null,
     receivedImage: localData.image,
     mismatch: 0,
+    url: null,
     isScreenshotCompare: true
   };
 
-  if (updateMasterScreenshot) {
+  if (screenshotBuild.updateMaster) {
     // this data is going to become the master data
     // so no need to compare with previous versions
 
     // write the screenshot data as the master data
-    await writeScreenshotData(masterDataDir, localData);
+    await writeScreenshotData(screenshotBuild.masterDirPath, localData);
 
     return compare;
   }
 
-  const masterData = await readMasterScreenshotData(masterDataDir, localData.id);
+  const masterData = await readScreenshotData(screenshotBuild.masterDirPath, localData.id);
   if (!masterData) {
     // there is no master data so nothing to compare it with
     // so let's just write the screenshot data as the master data
-    await writeScreenshotData(masterDataDir, localData);
+    await Promise.all([
+      writeScreenshotData(screenshotBuild.masterDirPath, localData),
+      writeScreenshotData(screenshotBuild.localDirPath, localData)
+    ]);
 
     return compare;
   }
 
-  // set the master data image is the image we're expecting
+  // set that the master data image is the image we're expecting
   compare.expectedImage = masterData.image;
+
+  compare.url = getCompareUrl(screenshotBuild.compareUrlTemplate, compare.expectedImage, compare.receivedImage);
 
   // compare if the image hashes are the same
   if (compare.expectedImage === compare.receivedImage) {
     // turns out the images are identical
     // cuz they have the exact same hashed filename
-
-    // write the screenshot data as the local data
-    await writeScreenshotData(localDataDir, localData);
+    await writeScreenshotData(screenshotBuild.localDirPath, localData);
 
     return compare;
   }
 
-  // compare the two images pixel by pixel to figure
-  // out a mismatch value
+  // compare the two images pixel by pixel to
+  // figure out a mismatch value
   compare.mismatch = await getMismatchValue(
-    imagesDir,
+    screenshotBuild.imagesDirPath,
     compare.expectedImage,
     compare.receivedImage,
     localData.width,
-    localData.height
+    localData.height,
+    threshold
   );
 
   return compare;
@@ -101,4 +110,12 @@ function getScreenshotId(emulateConfig: d.EmulateConfig, uniqueDescription: stri
   }
 
   return hash.digest('hex').substr(0, 8).toLowerCase();
+}
+
+
+function getCompareUrl(template: string, expectImage: string, receivedImage: string) {
+  if (typeof template !== 'string') {
+    return null;
+  }
+  return template.replace('<EXPECT>', expectImage).replace('<RECEIVED>', receivedImage);
 }

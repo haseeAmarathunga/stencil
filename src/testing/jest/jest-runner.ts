@@ -1,5 +1,4 @@
 import * as d from '../../declarations';
-import { completeScreenshotJob, setupScreenshotJob } from '../../screenshot/screenshot-setup';
 import { normalizePath } from '../../compiler/util';
 import { setScreenshotEmulateData } from '../puppeteer/puppeteer-emulate';
 import * as cp from 'child_process';
@@ -11,20 +10,21 @@ export async function runJest(config: d.Config, env: d.E2EProcessEnv, jestConfig
     const emulateDevices = config.testing.emulate;
     if (Array.isArray(emulateDevices)) {
 
-      const screenshotJob = await setupScreenshotJob(config);
+      const ScreenshotConnector = require(config.testing.screenshotConnector) as any;
+      const connector: d.ScreenshotConnector = new ScreenshotConnector();
 
-      env.__STENCIL_SCREENSHOT_JOB_ID__ = screenshotJob.id;
-      env.__STENCIL_SCREENSHOT_IMAGES_DIR__ = screenshotJob.imagesDir;
-      env.__STENCIL_SCREENSHOT_LOCAL_DATA_DIR__ = screenshotJob.localDataDir;
-      env.__STENCIL_SCREENSHOT_MASTER_DATA_DIR__ = screenshotJob.masterDataDir;
-      env.__STENCIL_SCREENSHOT_UPDATE__ = config.flags.updateScreenshot ? 'true' : null;
+      await connector.init({
+        rootDir: config.rootDir
+      });
+
+      env.__STENCIL_SCREENSHOT_BUILD__ = connector.toJson();
 
       for (let i = 0; i < emulateDevices.length; i++) {
         const emulate = emulateDevices[i];
         await runJestDevice(config, jestConfigPath, emulate);
       }
 
-      await completeScreenshotJob(config, screenshotJob);
+      await connector.complete();
 
       return;
     }

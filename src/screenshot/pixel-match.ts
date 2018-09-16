@@ -4,18 +4,23 @@ import fs from 'fs';
 import path from 'path';
 
 
-export async function getMismatchValue(imagesDir: string, masterImage: string, localImage: string, width: number, height: number) {
+export async function getMismatchValue(imageDir: string, masterImageName: string, localImageName: string, width: number, height: number, threshold: number) {
   const images = await Promise.all([
-    readImage(imagesDir, masterImage),
-    readImage(imagesDir, localImage)
+    readImage(imageDir, masterImageName),
+    readImage(imageDir, localImageName)
   ]);
 
-  const mismatchValue = pixelmatch(images[0], images[1], null, width, height, {
-    threshold: 0.1,
+  if (typeof threshold !== 'number' || threshold < 0 || threshold > 1) {
+    threshold = DEFAULT_THRESHOLD;
+  }
+
+  // get the number of different pixels
+  const diff = pixelmatch(images[0], images[1], null, width, height, {
+    threshold: threshold,
     includeAA: false
   });
 
-  return mismatchValue;
+  return (diff / (width * height));
 }
 
 
@@ -28,3 +33,6 @@ function readImage(imagesDir: string, image: string) {
     rs.pipe(new PNG()).on('parsed', resolve);
   });
 }
+
+
+const DEFAULT_THRESHOLD = 0.1;
