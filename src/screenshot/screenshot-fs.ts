@@ -10,7 +10,6 @@ export async function writeScreenshotImage(imagePath: string, screenshotBuf: Buf
   }
 }
 
-
 export async function writeScreenshotData(dataDir: string, screenshotData: d.ScreenshotData) {
   const filePath = getDataFilePath(dataDir, screenshotData.id);
   const content = JSON.stringify(screenshotData, null, 2);
@@ -25,7 +24,6 @@ export async function readScreenshotData(dataDir: string, screenshotId: string) 
     const dataFilePath = getDataFilePath(dataDir, screenshotId);
     const dataContent = await readFile(dataFilePath);
     rtn = JSON.parse(dataContent);
-
   } catch (e) {}
 
   return rtn;
@@ -120,12 +118,4 @@ export async function unlink(filePath: string) {
       resolve();
     });
   });
-}
-
-export async function addDirectoryGitIngore(dir: string) {
-  const dirGitIgnorePath = path.join(dir, '.gitignore');
-  const dirGitIgnoreExists = await fileExists(dirGitIgnorePath);
-  if (!dirGitIgnoreExists) {
-    await writeFile(dirGitIgnorePath, '*');
-  }
 }

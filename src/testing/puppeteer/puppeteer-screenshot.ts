@@ -13,7 +13,6 @@ export function initPageScreenshot(page: pd.E2EPageInternal) {
     page.compareScreenshot = async () => {
       const compare: d.ScreenshotCompare = {
         mismatch: 0,
-        isScreenshotCompare: true,
         desc: ''
       };
       return compare;
@@ -38,7 +37,7 @@ export async function compareE2EScreenshot(page: pd.E2EPageInternal, uniqueDescr
 
   const emulateConfig = JSON.parse(env.__STENCIL_EMULATE__) as d.EmulateConfig;
 
-  const screenshotBuild = JSON.parse(env.__STENCIL_SCREENSHOT_BUILD__) as d.ScreenshotBuild;
+  const screenshotBuild = JSON.parse(env.__STENCIL_SCREENSHOT_BUILD__) as d.ScreenshotBuildData;
 
   return compareScreenshot(emulateConfig, screenshotBuild, screenshotBuf, uniqueDescription, opts.threshold);
 }

@@ -1,18 +1,28 @@
+import * as d from '.';
+
 
 export interface ScreenshotConnector {
-  init(opts: ScreenshotConnectorOptions): Promise<void>;
-  complete(): Promise<void>;
+  initBuild(opts: ScreenshotConnectorOptions): Promise<void>;
+  completeBuild(): Promise<void>;
+  publishBuild(): Promise<void>;
+  getComparisonSummaryUrl(): string;
+  getTotalScreenshotImages(): number;
   toJson(): string;
 }
 
+
 export interface ScreenshotConnectorOptions {
   rootDir: string;
+  compareAppDir: string;
+  logger: d.Logger;
   buildId?: string;
+  buildMessage?: string;
   updateMaster?: boolean;
 }
 
-export interface ScreenshotBuild {
-  buildId: string;
+
+export interface ScreenshotBuildData {
+  id: string;
   rootDir: string;
   screenshotDirPath: string;
   imagesDirPath: string;
@@ -23,14 +33,10 @@ export interface ScreenshotBuild {
 }
 
 
-export interface ScreenshotCompare {
-  mismatch: number;
-  id?: string;
-  desc?: string;
-  expectedImage?: string;
-  receivedImage?: string;
-  url?: string;
-  isScreenshotCompare: boolean;
+export interface ScreenshotBuild {
+  id: string;
+  message: string;
+  screenshots: ScreenshotData[];
 }
 
 
@@ -42,6 +48,8 @@ export interface ScreenshotData {
   width?: number;
   height?: number;
   deviceScaleFactor?: number;
+  physicalWidth?: number;
+  physicalHeight?: number;
   hasTouch?: boolean;
   isLandscape?: boolean;
   isMobile?: boolean;
@@ -49,12 +57,21 @@ export interface ScreenshotData {
 }
 
 
-export interface ScreenshotServer {
-  start(connector: ScreenshotConnector): Promise<void>;
-  getRootUrl(): string;
-  getCompareUrl(snapshotIdA: string, snapshotIdB: string): string;
-  getSnapshotUrl(snapshotId: string): string;
-  isListening(): boolean;
+export interface ScreenshotCompare {
+  mismatch: number;
+  id?: string;
+  desc?: string;
+  expectedImage?: string;
+  receivedImage?: string;
+  url?: string;
+  device?: string;
+  width?: number;
+  height?: number;
+  deviceScaleFactor?: number;
+  hasTouch?: boolean;
+  isLandscape?: boolean;
+  isMobile?: boolean;
+  mediaType?: string;
 }
 
 

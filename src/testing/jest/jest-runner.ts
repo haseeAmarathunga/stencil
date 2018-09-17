@@ -9,23 +9,7 @@ export async function runJest(config: d.Config, env: d.E2EProcessEnv, jestConfig
   if (doScreenshots) {
     const emulateDevices = config.testing.emulate;
     if (Array.isArray(emulateDevices)) {
-
-      const ScreenshotConnector = require(config.testing.screenshotConnector) as any;
-      const connector: d.ScreenshotConnector = new ScreenshotConnector();
-
-      await connector.init({
-        rootDir: config.rootDir
-      });
-
-      env.__STENCIL_SCREENSHOT_BUILD__ = connector.toJson();
-
-      for (let i = 0; i < emulateDevices.length; i++) {
-        const emulate = emulateDevices[i];
-        await runJestDevice(config, jestConfigPath, emulate);
-      }
-
-      await connector.complete();
-
+      await runJestScreenshot(config, env, jestConfigPath, emulateDevices);
       return;
     }
   }
@@ -34,7 +18,43 @@ export async function runJest(config: d.Config, env: d.E2EProcessEnv, jestConfig
 }
 
 
-export async function runJestDevice(config: d.Config, jestConfigPath: string, screenshotEmulate: d.EmulateConfig) {
+export async function runJestScreenshot(config: d.Config, env: d.E2EProcessEnv, jestConfigPath: string, emulateDevices: d.EmulateConfig[]) {
+  const ScreenshotConnector = require(config.testing.screenshotConnector) as any;
+  const connector: d.ScreenshotConnector = new ScreenshotConnector();
+
+  const initTimespan = config.logger.createTimeSpan(`screenshot, initBuild started`, true);
+  await connector.initBuild({
+    rootDir: config.rootDir,
+    compareAppDir: path.join(config.sys.compiler.packageDir, 'screenshot', 'compare'),
+    logger: config.logger
+  });
+  initTimespan.finish(`screenshot, initBuild finished`);
+
+  env.__STENCIL_SCREENSHOT_BUILD__ = connector.toJson();
+
+  const testsTimespan = config.logger.createTimeSpan(`screenshot, tests started`, true);
+
+  for (let i = 0; i < emulateDevices.length; i++) {
+    const emulate = emulateDevices[i];
+    await runJestDevice(config, jestConfigPath, emulate);
+  }
+
+  testsTimespan.finish(`screenshot, tests finished`);
+
+  const completeTimespan = config.logger.createTimeSpan(`screenshot, completeTimespan started`, true);
+  await connector.completeBuild();
+  completeTimespan.finish(`screenshot, completeTimespan finished`);
+
+  const publishTimespan = config.logger.createTimeSpan(`screenshot, publishBuild started`, true);
+  await connector.publishBuild();
+  publishTimespan.finish(`screenshot, publishBuild finished`);
+
+  config.logger.info(`screenshots images compared: ${connector.getTotalScreenshotImages()}`);
+  config.logger.info(config.logger.magenta(connector.getComparisonSummaryUrl()));
+}
+
+
+export async function runJestDevice(config: d.Config, jestConfigPath: string, emulateDevice: d.EmulateConfig) {
   const jestPkgJsonPath = config.sys.resolveModule(config.rootDir, 'jest');
   const jestPkgJson: d.PackageJsonData = require(jestPkgJsonPath);
   const jestBinModule = path.join(normalizePath(path.dirname(jestPkgJsonPath)), jestPkgJson.bin.jest);
@@ -54,8 +74,9 @@ export async function runJestDevice(config: d.Config, jestConfigPath: string, sc
   return new Promise((resolve, reject) => {
 
     const jestProcessEnv = Object.assign({}, process.env as d.E2EProcessEnv);
-    if (screenshotEmulate) {
-      setScreenshotEmulateData(screenshotEmulate, jestProcessEnv);
+    if (emulateDevice) {
+      config.logger.info(`screenshot emulate: ${emulateDevice.device}`);
+      setScreenshotEmulateData(emulateDevice, jestProcessEnv);
     }
 
     const p = cp.fork(jestBinModule, args, {

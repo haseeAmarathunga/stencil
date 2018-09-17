@@ -10,7 +10,7 @@ export function toMatchScreenshot(compare: d.ScreenshotCompare, opts: d.MatchScr
     throw new Error(`expect(compare).toMatchScreenshot() must be a resolved value, not a promise, before it can be tested`);
   }
 
-  if (!compare.isScreenshotCompare) {
+  if (typeof compare.mismatch !== 'number') {
     throw new Error(`expect toMatchScreenshot() value is not a screenshot compare`);
   }
 
