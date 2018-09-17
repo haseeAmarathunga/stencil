@@ -186,12 +186,12 @@ export class ScreenshotConnector implements d.ScreenshotConnector {
 function createBuildId() {
   const d = new Date();
 
-  let fmDt = (d.getUTCFullYear() + '');
-  fmDt += ('0' + (d.getUTCMonth() + 1)).slice(-2);
-  fmDt += ('0' + d.getUTCDate()).slice(-2);
-  fmDt += ('0' + d.getUTCHours()).slice(-2);
-  fmDt += ('0' + d.getUTCMinutes()).slice(-2);
-  fmDt += ('0' + d.getUTCSeconds()).slice(-2);
+  let fmDt = (d.getFullYear() + '') + '-';
+  fmDt += ('0' + (d.getMonth() + 1)).slice(-2) + '-';
+  fmDt += ('0' + d.getDate()).slice(-2) + 'T';
+  fmDt += ('0' + d.getHours()).slice(-2) + '-';
+  fmDt += ('0' + d.getMinutes()).slice(-2) + ':';
+  fmDt += ('0' + d.getSeconds()).slice(-2);
 
   return fmDt;
 }
