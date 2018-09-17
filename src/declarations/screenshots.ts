@@ -15,9 +15,17 @@ export interface ScreenshotConnectorOptions {
   rootDir: string;
   compareAppDir: string;
   logger: d.Logger;
+  screenshotDirName?: string;
+  masterDirName?: string;
+  localDirName?: string;
+  compareAppFileName?: string;
+  imagesDirName?: string;
   buildId?: string;
   buildMessage?: string;
   updateMaster?: boolean;
+  gitIgnoreImages?: boolean;
+  gitIgnoreLocal?: boolean;
+  gitIgnoreCompareApp?: boolean;
 }
 
 

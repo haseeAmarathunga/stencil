@@ -6,29 +6,25 @@ import { normalizePath } from '../compiler/util';
 
 
 export class ScreenshotConnector implements d.ScreenshotConnector {
-  screenshotDirName = 'screenshot';
-  masterDirName = 'master';
-  localDirName = 'local';
-  compareAppFileName = 'compare.html';
-  imagesDirName = 'images';
-  gitIgnoreImages = true;
-  gitIgnoreLocal = true;
-  gitIgnoreCompareApp = true;
-
-  logger: d.Logger;
-  buildId: string;
-  buildMessage: string;
-  rootDir: string;
-  compareAppDir: string;
-  screenshotDirPath: string;
-  masterDirPath: string;
-  localDirPath: string;
-  imagesDirPath: string;
-  updateMaster: boolean;
-  compareUrl: string;
-  masterBuild: d.ScreenshotBuild;
-  localBuild: d.ScreenshotBuild;
-  localBuildPath: string;
+  private screenshotDirName = 'screenshot';
+  private masterDirName = 'master';
+  private localDirName = 'local';
+  private compareAppFileName = 'compare.html';
+  private imagesDirName = 'images';
+  private logger: d.Logger;
+  private buildId: string;
+  private buildMessage: string;
+  private rootDir: string;
+  private compareAppDir: string;
+  private screenshotDirPath: string;
+  private masterDirPath: string;
+  private localDirPath: string;
+  private imagesDirPath: string;
+  private updateMaster: boolean;
+  private compareUrl: string;
+  private masterBuild: d.ScreenshotBuild;
+  private localBuild: d.ScreenshotBuild;
+  private localBuildPath: string;
 
   async initBuild(opts: d.ScreenshotConnectorOptions) {
     this.logger = opts.logger;
@@ -44,6 +40,26 @@ export class ScreenshotConnector implements d.ScreenshotConnector {
     this.rootDir = opts.rootDir;
     this.compareAppDir = opts.compareAppDir;
     this.updateMaster = !!opts.updateMaster;
+
+    if (typeof opts.screenshotDirName === 'string') {
+      this.screenshotDirName = opts.screenshotDirName;
+    }
+
+    if (typeof opts.masterDirName === 'string') {
+      this.masterDirName = opts.masterDirName;
+    }
+
+    if (typeof opts.localDirName === 'string') {
+      this.localDirName = opts.localDirName;
+    }
+
+    if (typeof opts.compareAppFileName === 'string') {
+      this.compareAppFileName = opts.compareAppFileName;
+    }
+
+    if (typeof opts.imagesDirName === 'string') {
+      this.imagesDirName = opts.imagesDirName;
+    }
 
     this.screenshotDirPath = path.join(this.rootDir, this.screenshotDirName);
     this.imagesDirPath = path.join(this.screenshotDirPath, this.imagesDirName);
@@ -76,13 +92,13 @@ export class ScreenshotConnector implements d.ScreenshotConnector {
     if (!gitIgnoreExists) {
       const content: string[] = [];
 
-      if (this.gitIgnoreImages) {
+      if (opts.gitIgnoreImages !== false) {
         content.push(this.imagesDirName);
       }
-      if (this.gitIgnoreLocal) {
+      if (opts.gitIgnoreLocal !== false) {
         content.push(this.localDirName);
       }
-      if (this.gitIgnoreCompareApp) {
+      if (opts.gitIgnoreCompareApp !== false) {
         content.push(this.compareAppFileName);
       }
 
@@ -193,13 +209,15 @@ function createLocalCompare(appUrl: string, imagesUrl: string, masterBuild: d.Sc
   <script src="${appUrl}/build/app.js"></script>
 </head>
 <body>
+  <ion-app></ion-app>
   <script>
     (function() {
       var compare = document.createElement('screenshot-compare');
       compare.imagesUrl = '${imagesUrl}/';
       compare.buildA = ${JSON.stringify(masterBuild)};
       compare.buildB = ${JSON.stringify(localBuild)};
-      document.body.appendChild(compare);
+      compare.className = 'ion-page';
+      document.querySelector('ion-app').appendChild(compare);
     })();
   </script>
 </body>
