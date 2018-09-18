@@ -6,7 +6,7 @@ import { readFile, writeFile } from './screenshot-fs';
 import path from 'path';
 
 
-export async function getMismatchValue(cacheDir: string, imageDir: string, masterImageName: string, localImageName: string, width: number, height: number, threshold: number) {
+export async function getMismatchedPixels(cacheDir: string, imageDir: string, masterImageName: string, localImageName: string, width: number, height: number, threshold: number) {
   if (typeof threshold !== 'number' || threshold < 0 || threshold > 1) {
     threshold = DEFAULT_THRESHOLD;
   }

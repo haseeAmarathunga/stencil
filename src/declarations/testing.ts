@@ -77,7 +77,7 @@ declare global {
        * `expect(compare).toMatchScreenshot()`. The `mismatch`
        * value within the optional `opts` argument allows each test
        * to provide an allowable mismatch value between `0` and `1`.
-       * Default `mismatch` option is `0.01`.
+       * Default `mismatchedPixels` option is `0.01`.
        */
       toMatchScreenshot(opts?: MatchScreenshotOptions): void;
     }
@@ -87,14 +87,22 @@ declare global {
 
 export interface MatchScreenshotOptions {
   /**
-   * A `mismatch` value of `0` means no pixels can be mismatched, and `0.1`
+   * The `mismatchedPixels` value is the total number of pixels that can be
+   * mismatched until the test fails. For example, if the value is `100`,
+   * then if there were `101` pixels that were mismatched then the test
+   * would fail. Default is to use the `mismatchedPercent` value.
+   */
+  mismatchedPixels?: number;
+
+  /**
+   * A `mismatchedRatio` value of `0` means no pixels can be mismatched, and `0.1`
    * means 10% of the pixels can have mismatched. Realistically, two screenshots
    * representing the same content may have a small number of mismatched
    * pixels due to anti-aliasing, which is perfectly normal. For this reason,
-   * the default `mismatch` value is `0.01`, which means that up to 1% of the
+   * the default `mismatchedRatio` value is `0.01`, which means that up to 1% of the
    * pixels are ok to be mismatched.
    */
-  mismatch?: number;
+  mismatchedRatio?: number;
 }
 
 

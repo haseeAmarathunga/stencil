@@ -36,6 +36,7 @@ export async function runJestScreenshot(config: d.Config, env: d.E2EProcessEnv, 
     rootDir: config.rootDir,
     cacheDir: config.cacheDir,
     compareAppDir: path.join(config.sys.compiler.packageDir, 'screenshot', 'compare'),
+    updateMaster: config.flags.updateScreenshot,
     logger: config.logger
   });
   initTimespan.finish(`screenshot, initBuild finished`);

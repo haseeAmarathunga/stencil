@@ -343,22 +343,15 @@ describe('parseFlags', () => {
     expect(flags.stats).toBe(true);
   });
 
-  it('should parse --channel=production', () => {
-    process.argv[2] = '--channel=production';
+  it('should parse --update-screenshot', () => {
+    process.argv[2] = '--update-screenshot';
     const flags = parseFlags(process);
-    expect(flags.channel).toBe('production');
+    expect(flags.updateScreenshot).toBe(true);
   });
 
-  it('should parse --channel production', () => {
-    process.argv[2] = '--channel';
-    process.argv[3] = 'production';
+  it('should not parse --update-screenshot', () => {
     const flags = parseFlags(process);
-    expect(flags.channel).toBe('production');
-  });
-
-  it('should not parse --channel', () => {
-    const flags = parseFlags(process);
-    expect(flags.channel).toBe(null);
+    expect(flags.updateScreenshot).toBe(null);
   });
 
   it('should parse --version', () => {

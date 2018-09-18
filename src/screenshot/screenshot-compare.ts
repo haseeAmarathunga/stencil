@@ -1,5 +1,5 @@
 import * as d from '../declarations';
-import { getMismatchValue } from './pixel-match';
+import { getMismatchedPixels } from './pixel-match';
 import { readScreenshotData, writeScreenshotData, writeScreenshotImage } from './screenshot-fs';
 import crypto from 'crypto';
 import path from 'path';
@@ -43,13 +43,16 @@ export async function compareScreenshot(emulateConfig: d.EmulateConfig, screensh
     desc: localData.desc,
     expectedImage: null,
     receivedImage: localData.image,
-    mismatch: 0,
+    mismatchedPixels: 0,
+    mismatchedRatio: 0,
     url: null,
     device: emulateConfig.device,
     userAgent: emulateConfig.userAgent,
     width: emulateConfig.width,
     height: emulateConfig.height,
     deviceScaleFactor: emulateConfig.deviceScaleFactor,
+    physicalWidth: localData.physicalWidth,
+    physicalHeight: localData.physicalHeight,
     hasTouch: emulateConfig.hasTouch,
     isLandscape: emulateConfig.isLandscape,
     isMobile: emulateConfig.isMobile,
@@ -77,16 +80,18 @@ export async function compareScreenshot(emulateConfig: d.EmulateConfig, screensh
   if (compare.expectedImage !== compare.receivedImage) {
     // compare the two images pixel by pixel to
     // figure out a mismatch value
-    compare.mismatch = await getMismatchValue(
+    compare.mismatchedPixels = await getMismatchedPixels(
       screenshotBuild.cacheDir,
       screenshotBuild.imagesDirPath,
       compare.expectedImage,
       compare.receivedImage,
-      localData.physicalWidth,
-      localData.physicalHeight,
+      compare.physicalWidth,
+      compare.physicalHeight,
       threshold
     );
   }
+
+  compare.mismatchedRatio = (compare.mismatchedPixels / (compare.physicalWidth * compare.physicalHeight));
 
   return compare;
 }

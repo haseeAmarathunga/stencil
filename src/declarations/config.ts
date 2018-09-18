@@ -189,7 +189,6 @@ export interface ConfigFlags {
   args?: string[];
   address?: string;
   cache?: boolean;
-  channel?: string;
   checkVersion?: boolean;
   ci?: boolean;
   compare?: boolean;

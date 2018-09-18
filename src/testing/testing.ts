@@ -60,7 +60,12 @@ export class Testing implements d.Testing {
     const doScreenshots = !!(config.flags.e2e && config.flags.screenshot);
     if (doScreenshots) {
       env.__STENCIL_SCREENSHOT__ = 'true';
-      config.logger.info(config.logger.magenta(`comparing screenshots`));
+
+      if (config.flags.updateScreenshot) {
+        config.logger.info(config.logger.magenta(`updating master screenshots`));
+      } else {
+        config.logger.info(config.logger.magenta(`comparing against master screenshots`));
+      }
     }
 
     const jestEnvNodeModule = config.sys.lazyRequire.getModulePath('jest-environment-node');

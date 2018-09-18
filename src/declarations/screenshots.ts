@@ -69,7 +69,8 @@ export interface ScreenshotData {
 
 
 export interface ScreenshotCompare {
-  mismatch: number;
+  mismatchedPixels: number;
+  mismatchedRatio: number;
   id?: string;
   desc?: string;
   expectedImage?: string;
@@ -80,6 +81,8 @@ export interface ScreenshotCompare {
   width?: number;
   height?: number;
   deviceScaleFactor?: number;
+  physicalWidth?: number;
+  physicalHeight?: number;
   hasTouch?: boolean;
   isLandscape?: boolean;
   isMobile?: boolean;

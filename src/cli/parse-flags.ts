@@ -150,6 +150,7 @@ const ARG_OPTS = {
     'skip-node-check',
     'spec',
     'stats',
+    'update-screenshot',
     'version',
     'watch'
   ],
@@ -163,8 +164,7 @@ const ARG_OPTS = {
     'config',
     'docs-json',
     'log-level',
-    'root',
-    'screenshot-adapter'
+    'root'
   ],
   alias: {
     'config': 'c',
