@@ -97,16 +97,11 @@ export class Testing implements d.Testing {
 
     this.jestConfigPath = await setupJestConfig(config);
 
-    try {
-      await runJest(config, env, this.jestConfigPath, doScreenshots);
-
-    } catch (e) {
-      config.logger.error(e);
-      return false;
-    }
+    const passed = await runJest(config, env, this.jestConfigPath, doScreenshots);
 
     config.logger.info('');
-    return true;
+
+    return passed;
   }
 
   async destroy() {

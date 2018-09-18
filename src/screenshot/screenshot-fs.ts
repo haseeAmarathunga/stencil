@@ -54,6 +54,18 @@ export function readFile(filePath: string) {
   });
 }
 
+export function readFileBuffer(filePath: string) {
+  return new Promise<Buffer>((resolve, reject) => {
+    fs.readFile(filePath, (err: any, data) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(data);
+      }
+    });
+  });
+}
+
 export function writeFile(filePath: string, data: any) {
   return new Promise<void>((resolve, reject) => {
     fs.writeFile(filePath, data, (err: any) => {

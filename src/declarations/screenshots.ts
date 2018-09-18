@@ -13,6 +13,7 @@ export interface ScreenshotConnector {
 
 export interface ScreenshotConnectorOptions {
   rootDir: string;
+  cacheDir: string;
   compareAppDir: string;
   logger: d.Logger;
   screenshotDirName?: string;
@@ -20,8 +21,8 @@ export interface ScreenshotConnectorOptions {
   localDirName?: string;
   compareAppFileName?: string;
   imagesDirName?: string;
-  buildId?: string;
-  buildMessage?: string;
+  buildId: string;
+  buildMessage: string;
   updateMaster?: boolean;
   gitIgnoreImages?: boolean;
   gitIgnoreLocal?: boolean;
@@ -32,6 +33,7 @@ export interface ScreenshotConnectorOptions {
 export interface ScreenshotBuildData {
   id: string;
   rootDir: string;
+  cacheDir: string;
   screenshotDirPath: string;
   imagesDirPath: string;
   masterDirPath: string;
@@ -53,6 +55,7 @@ export interface ScreenshotData {
   desc: string;
   image: string;
   device?: string;
+  userAgent?: string;
   width?: number;
   height?: number;
   deviceScaleFactor?: number;
@@ -73,6 +76,7 @@ export interface ScreenshotCompare {
   receivedImage?: string;
   url?: string;
   device?: string;
+  userAgent?: string;
   width?: number;
   height?: number;
   deviceScaleFactor?: number;

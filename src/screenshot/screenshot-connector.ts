@@ -15,6 +15,7 @@ export class ScreenshotConnector implements d.ScreenshotConnector {
   private buildId: string;
   private buildMessage: string;
   private rootDir: string;
+  private cacheDir: string;
   private compareAppDir: string;
   private screenshotDirPath: string;
   private masterDirPath: string;
@@ -30,12 +31,10 @@ export class ScreenshotConnector implements d.ScreenshotConnector {
     this.logger = opts.logger;
 
     this.buildId = opts.buildId;
-    if (typeof this.buildId !== 'string') {
-      this.buildId = createBuildId();
-    }
-    this.buildMessage = typeof opts.buildMessage === 'string' ? opts.buildMessage.trim() : '';
+    this.buildMessage = opts.buildMessage;
+    this.cacheDir = opts.cacheDir;
 
-    this.logger.debug(`screenshot build: ${this.buildId}${this.buildMessage ? ', ' + this.buildMessage : ''}`);
+    this.logger.debug(`screenshot build: ${this.buildId}, ${this.buildMessage}`);
 
     this.rootDir = opts.rootDir;
     this.compareAppDir = opts.compareAppDir;
@@ -125,7 +124,7 @@ export class ScreenshotConnector implements d.ScreenshotConnector {
 
     this.masterBuild = {
       id: 'master',
-      message: '',
+      message: 'Master',
       screenshots: masterScreenshots
     };
 
@@ -145,13 +144,30 @@ export class ScreenshotConnector implements d.ScreenshotConnector {
     this.localBuildPath = path.join(this.localDirPath, `${this.localBuild.id}.json`);
 
     await fs.writeFile(this.localBuildPath, JSON.stringify(this.localBuild, null, 2));
+
+    for (let i = 0; i < localScreenshots.length; i++) {
+      const screenshot = localScreenshots[i];
+      const imageName = screenshot.image;
+      const jsonpFileName = `screenshot_${imageName}.js`;
+      const jsonFilePath = path.join(this.cacheDir, jsonpFileName);
+      const jsonpExists = await fs.fileExists(jsonFilePath);
+      if (jsonpExists) {
+        continue;
+      }
+
+      const imageFilePath = path.join(this.imagesDirPath, imageName);
+      const imageBuf = await fs.readFileBuffer(imageFilePath);
+      const jsonpContent = `loadScreenshot("${imageName}","data:image/png;base64,${imageBuf.toString('base64')}",${screenshot.width},${screenshot.height},${screenshot.deviceScaleFactor},${screenshot.physicalWidth},${screenshot.physicalHeight});`;
+      await fs.writeFile(jsonFilePath, jsonpContent);
+    }
   }
 
   async publishBuild() {
     const appUrl = normalizePath(path.relative(this.screenshotDirPath, this.compareAppDir));
     const imagesUrl = normalizePath(path.relative(this.screenshotDirPath, this.imagesDirPath));
+    const jsonpUrl = normalizePath(path.relative(this.screenshotDirPath, this.cacheDir));
 
-    const html = createLocalCompare(appUrl, imagesUrl, this.masterBuild, this.localBuild);
+    const html = createLocalCompare(appUrl, imagesUrl, jsonpUrl, this.masterBuild, this.localBuild);
 
     const compareAppPath = path.join(this.screenshotDirPath, this.compareAppFileName);
     await fs.writeFile(compareAppPath, html);
@@ -169,6 +185,7 @@ export class ScreenshotConnector implements d.ScreenshotConnector {
     const screenshotBuild: d.ScreenshotBuildData = {
       id: this.buildId,
       rootDir: this.rootDir,
+      cacheDir: this.cacheDir,
       screenshotDirPath: this.screenshotDirPath,
       imagesDirPath: this.imagesDirPath,
       masterDirPath: this.masterDirPath,
@@ -183,21 +200,7 @@ export class ScreenshotConnector implements d.ScreenshotConnector {
 }
 
 
-function createBuildId() {
-  const d = new Date();
-
-  let fmDt = (d.getFullYear() + '') + '-';
-  fmDt += ('0' + (d.getMonth() + 1)).slice(-2) + '-';
-  fmDt += ('0' + d.getDate()).slice(-2) + 'T';
-  fmDt += ('0' + d.getHours()).slice(-2) + '-';
-  fmDt += ('0' + d.getMinutes()).slice(-2) + ':';
-  fmDt += ('0' + d.getSeconds()).slice(-2);
-
-  return fmDt;
-}
-
-
-function createLocalCompare(appUrl: string, imagesUrl: string, masterBuild: d.ScreenshotBuild, localBuild: d.ScreenshotBuild) {
+function createLocalCompare(appUrl: string, imagesUrl: string, jsonpUrl: string, masterBuild: d.ScreenshotBuild, localBuild: d.ScreenshotBuild) {
   return `<!DOCTYPE html>
 <html dir="ltr" lang="en">
 <head>
@@ -214,6 +217,7 @@ function createLocalCompare(appUrl: string, imagesUrl: string, masterBuild: d.Sc
     (function() {
       var compare = document.createElement('screenshot-compare');
       compare.imagesUrl = '${imagesUrl}/';
+      compare.jsonpUrl = '${jsonpUrl}/';
       compare.buildA = ${JSON.stringify(masterBuild)};
       compare.buildB = ${JSON.stringify(localBuild)};
       compare.className = 'ion-page';
@@ -227,14 +231,27 @@ function createLocalCompare(appUrl: string, imagesUrl: string, masterBuild: d.Sc
 
 function sortScreenshots(screenshots: d.ScreenshotData[]) {
   screenshots.sort((a, b) => {
-    if (a.desc.toLowerCase() < b.desc.toLowerCase()) return -1;
-    if (a.desc.toLowerCase() > b.desc.toLowerCase()) return 1;
-    if (a.device.toLowerCase() < b.device.toLowerCase()) return -1;
-    if (a.device.toLowerCase() > b.device.toLowerCase()) return 1;
+    if (a.desc && b.desc) {
+      if (a.desc.toLowerCase() < b.desc.toLowerCase()) return -1;
+      if (a.desc.toLowerCase() > b.desc.toLowerCase()) return 1;
+    }
+
+    if (a.device && b.device) {
+      if (a.device.toLowerCase() < b.device.toLowerCase()) return -1;
+      if (a.device.toLowerCase() > b.device.toLowerCase()) return 1;
+    }
+
+    if (a.userAgent && b.userAgent) {
+      if (a.userAgent < b.userAgent) return -1;
+      if (a.userAgent > b.userAgent) return 1;
+    }
+
     if (a.width < b.width) return -1;
     if (a.width > b.width) return 1;
+
     if (a.id < b.id) return -1;
     if (a.id > b.id) return 1;
+
     return 0;
   });
 }

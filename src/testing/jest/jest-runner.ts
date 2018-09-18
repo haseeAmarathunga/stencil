@@ -9,12 +9,19 @@ export async function runJest(config: d.Config, env: d.E2EProcessEnv, jestConfig
   if (doScreenshots) {
     const emulateDevices = config.testing.emulate;
     if (Array.isArray(emulateDevices)) {
-      await runJestScreenshot(config, env, jestConfigPath, emulateDevices);
-      return;
+      return await runJestScreenshot(config, env, jestConfigPath, emulateDevices);
     }
   }
 
-  await runJestDevice(config, jestConfigPath, null);
+  let passed = true;
+
+  try {
+    await runJestDevice(config, jestConfigPath, null);
+  } catch (e) {
+    passed = false;
+  }
+
+  return passed;
 }
 
 
@@ -24,7 +31,10 @@ export async function runJestScreenshot(config: d.Config, env: d.E2EProcessEnv, 
 
   const initTimespan = config.logger.createTimeSpan(`screenshot, initBuild started`, true);
   await connector.initBuild({
+    buildId: createBuildId(),
+    buildMessage: createBuildMessage(),
     rootDir: config.rootDir,
+    cacheDir: config.cacheDir,
     compareAppDir: path.join(config.sys.compiler.packageDir, 'screenshot', 'compare'),
     logger: config.logger
   });
@@ -34,9 +44,15 @@ export async function runJestScreenshot(config: d.Config, env: d.E2EProcessEnv, 
 
   const testsTimespan = config.logger.createTimeSpan(`screenshot, tests started`, true);
 
+  let passed = true;
+
   for (let i = 0; i < emulateDevices.length; i++) {
     const emulate = emulateDevices[i];
-    await runJestDevice(config, jestConfigPath, emulate);
+    try {
+      await runJestDevice(config, jestConfigPath, emulate);
+    } catch (e) {
+      passed = false;
+    }
   }
 
   testsTimespan.finish(`screenshot, tests finished`);
@@ -51,6 +67,8 @@ export async function runJestScreenshot(config: d.Config, env: d.E2EProcessEnv, 
 
   config.logger.info(`screenshots images compared: ${connector.getTotalScreenshotImages()}`);
   config.logger.info(config.logger.magenta(connector.getComparisonSummaryUrl()));
+
+  return passed;
 }
 
 
@@ -75,7 +93,7 @@ export async function runJestDevice(config: d.Config, jestConfigPath: string, em
 
     const jestProcessEnv = Object.assign({}, process.env as d.E2EProcessEnv);
     if (emulateDevice) {
-      config.logger.info(`screenshot emulate: ${emulateDevice.device}`);
+      config.logger.info(`screenshot emulate: ${emulateDevice.device || emulateDevice.userAgent}`);
       setScreenshotEmulateData(emulateDevice, jestProcessEnv);
     }
 
@@ -102,6 +120,35 @@ export async function runJestDevice(config: d.Config, jestConfigPath: string, em
 
   });
 }
+
+
+function createBuildId() {
+  const d = new Date();
+
+  let fmDt = (d.getFullYear() + '');
+  fmDt += ('0' + (d.getMonth() + 1)).slice(-2);
+  fmDt += ('0' + d.getDate()).slice(-2);
+  fmDt += ('0' + d.getHours()).slice(-2);
+  fmDt += ('0' + d.getMinutes()).slice(-2);
+  fmDt += ('0' + d.getSeconds()).slice(-2);
+
+  return fmDt;
+}
+
+
+function createBuildMessage() {
+  const d = new Date();
+
+  let fmDt = (d.getFullYear() + '') + '-';
+  fmDt += ('0' + (d.getMonth() + 1)).slice(-2) + '-';
+  fmDt += ('0' + d.getDate()).slice(-2) + ' ';
+  fmDt += ('0' + d.getHours()).slice(-2) + ':';
+  fmDt += ('0' + d.getMinutes()).slice(-2) + ':';
+  fmDt += ('0' + d.getSeconds()).slice(-2);
+
+  return `Local: ${fmDt}`;
+}
+
 
 
 export async function setupJestConfig(config: d.Config) {

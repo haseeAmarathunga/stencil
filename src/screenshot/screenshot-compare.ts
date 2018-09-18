@@ -19,6 +19,7 @@ export async function compareScreenshot(emulateConfig: d.EmulateConfig, screensh
     desc: uniqueDescription,
     image: localImageName,
     device: emulateConfig.device,
+    userAgent: emulateConfig.userAgent,
     width: emulateConfig.width,
     height: emulateConfig.height,
     deviceScaleFactor: emulateConfig.deviceScaleFactor,
@@ -45,6 +46,7 @@ export async function compareScreenshot(emulateConfig: d.EmulateConfig, screensh
     mismatch: 0,
     url: null,
     device: emulateConfig.device,
+    userAgent: emulateConfig.userAgent,
     width: emulateConfig.width,
     height: emulateConfig.height,
     deviceScaleFactor: emulateConfig.deviceScaleFactor,
@@ -76,11 +78,12 @@ export async function compareScreenshot(emulateConfig: d.EmulateConfig, screensh
     // compare the two images pixel by pixel to
     // figure out a mismatch value
     compare.mismatch = await getMismatchValue(
+      screenshotBuild.cacheDir,
       screenshotBuild.imagesDirPath,
       compare.expectedImage,
       compare.receivedImage,
-      localData.width,
-      localData.height,
+      localData.physicalWidth,
+      localData.physicalHeight,
       threshold
     );
   }

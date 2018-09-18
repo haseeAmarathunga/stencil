@@ -370,6 +370,9 @@ export interface EmulateConfig {
    */
   isLandscape?: boolean;
 
+  /**
+   * User-Agent to be used. Defaults to the user-agent of the installed Puppeteer version.
+   */
   userAgent?: string;
 
   /**
