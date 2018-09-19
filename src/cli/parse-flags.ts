@@ -160,11 +160,11 @@ const ARG_OPTS = {
   ],
   string: [
     'address',
-    'channel',
     'config',
     'docs-json',
     'log-level',
-    'root'
+    'root',
+    'screenshot-connector'
   ],
   alias: {
     'config': 'c',

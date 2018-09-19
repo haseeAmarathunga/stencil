@@ -26,6 +26,8 @@ export async function runJest(config: d.Config, env: d.E2EProcessEnv, jestConfig
 
 
 export async function runJestScreenshot(config: d.Config, env: d.E2EProcessEnv, jestConfigPath: string, emulateDevices: d.EmulateConfig[]) {
+  config.logger.debug(`screenshot connector: ${config.testing.screenshotConnector}`);
+
   const ScreenshotConnector = require(config.testing.screenshotConnector) as any;
   const connector: d.ScreenshotConnector = new ScreenshotConnector();
 

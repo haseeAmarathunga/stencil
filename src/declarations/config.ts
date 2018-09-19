@@ -210,6 +210,7 @@ export interface ConfigFlags {
   prod?: boolean;
   root?: string;
   screenshot?: boolean;
+  screenshotConnector?: string;
   serve?: boolean;
   serviceWorker?: boolean;
   spec?: boolean;

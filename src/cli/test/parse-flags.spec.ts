@@ -319,6 +319,24 @@ describe('parseFlags', () => {
     expect(flags.screenshot).toBe(true);
   });
 
+  it('should parse --screenshot-connector scripts/connector.js', () => {
+    process.argv[2] = '--screenshot-connector';
+    process.argv[3] = 'scripts/connector.js';
+    const flags = parseFlags(process);
+    expect(flags.screenshotConnector).toBe('scripts/connector.js');
+  });
+
+  it('should parse --screenshot-connector=scripts/connector.js', () => {
+    process.argv[2] = '--screenshot-connector=scripts/connector.js';
+    const flags = parseFlags(process);
+    expect(flags.screenshotConnector).toBe('scripts/connector.js');
+  });
+
+  it('should not parse --screenshot-connector', () => {
+    const flags = parseFlags(process);
+    expect(flags.maxWorkers).toBe(null);
+  });
+
   it('should parse --serve', () => {
     process.argv[2] = '--serve';
     const flags = parseFlags(process);

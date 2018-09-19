@@ -37,6 +37,10 @@ export function validateTesting(config: d.Config) {
     testing.rootDir = config.rootDir;
   }
 
+  if (config.flags && typeof config.flags.screenshotConnector === 'string') {
+    testing.screenshotConnector = config.flags.screenshotConnector;
+  }
+
   if (typeof testing.screenshotConnector === 'string') {
     if (!path.isAbsolute(testing.screenshotConnector)) {
       testing.screenshotConnector = path.join(config.rootDir, testing.screenshotConnector);
