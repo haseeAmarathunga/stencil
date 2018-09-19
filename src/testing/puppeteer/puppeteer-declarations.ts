@@ -30,7 +30,7 @@ export interface E2EPage extends PuppeteerPage {
    * `my-cmp`, the call would be `page.find('my-cmp >>> div')`.
    * Returns `null` if an element was not found.
    */
-  find(selector: string): Promise<E2EElement>;
+  find(selector: FindSelector): Promise<E2EElement>;
 
   /**
    * Find all elements that match the selector, which is the same as
@@ -40,7 +40,7 @@ export interface E2EPage extends PuppeteerPage {
    * `my-cmp`, the call would be `page.findAll('my-cmp >>> li')`.
    * Returns an empty array if no elements were found.
    */
-  findAll(selector: string): Promise<E2EElement[]>;
+  findAll(selector: FindSelector): Promise<E2EElement[]>;
 
   /**
    * During an end-to-end test, a dev-server is started so `page.goto(url)` can be used
@@ -147,7 +147,7 @@ export interface E2EElement {
    * `element.find('my-cmp >>> div')`. Returns `null` if no
    * elements were found.
    */
-  find(selector: string): Promise<E2EElement>;
+  find(selector: FindSelector): Promise<E2EElement>;
 
   /**
    * Find all child elements that match the selector, which is the same as
@@ -158,7 +158,7 @@ export interface E2EElement {
    * `element.findAll('my-cmp >>> li')`. Returns an empty array if
    * no elements were found.
    */
-  findAll(selector: string): Promise<E2EElement[]>;
+  findAll(selector: FindSelector): Promise<E2EElement[]>;
 
   /**
    * Sets focus on the element.
@@ -351,6 +351,22 @@ export interface E2EElementInternal extends E2EElement {
   e2eDispose(): Promise<void>;
   e2eRunActions(): Promise<void>;
   e2eSync(): Promise<void>;
+}
+
+
+export type FindSelector = string | FindSelectorOptions;
+
+export interface FindSelectorOptions {
+  /**
+   * Finds an element with text content matching this
+   * exact value after the whitespace has been trimmed.
+   */
+  text?: string;
+
+  /**
+   * Finds an element with text content containing this value.
+   */
+  contains?: string;
 }
 
 
