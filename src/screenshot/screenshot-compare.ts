@@ -16,10 +16,10 @@ export async function compareScreenshot(emulateConfig: d.EmulateConfig, screensh
   // and what we can use to quickly see if they're identical or not
   const localData: d.ScreenshotData = {
     id: getScreenshotId(emulateConfig, uniqueDescription),
-    desc: uniqueDescription,
     image: localImageName,
     device: emulateConfig.device,
     userAgent: emulateConfig.userAgent,
+    desc: uniqueDescription,
     width: emulateConfig.width,
     height: emulateConfig.height,
     deviceScaleFactor: emulateConfig.deviceScaleFactor,

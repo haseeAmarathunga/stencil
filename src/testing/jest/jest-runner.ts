@@ -156,7 +156,7 @@ function createBuildMessage() {
 
 
 export async function setupJestConfig(config: d.Config) {
-  const jestConfigPath = path.join(config.rootDir, STENCIL_JEST_CONFIG);
+  const jestConfigPath = path.join(config.cacheDir, STENCIL_JEST_CONFIG);
 
   config.logger.debug(`jest config: ${jestConfigPath}`);
 
@@ -166,6 +166,10 @@ export async function setupJestConfig(config: d.Config) {
       jestConfig[testingConfig] = (config.testing as any)[testingConfig];
     }
   });
+
+  if (typeof jestConfig.rootDir !== 'string') {
+    jestConfig.rootDir = config.rootDir;
+  }
 
   await config.sys.fs.writeFile(
     jestConfigPath,
@@ -230,7 +234,7 @@ const JEST_CONFIG = [
 ];
 
 
-const STENCIL_JEST_CONFIG = '.stencil.jest.config.json';
+const STENCIL_JEST_CONFIG = 'stencil.jest.config.json';
 
 
 function getJestArgs(config: d.Config) {
