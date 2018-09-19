@@ -37,7 +37,9 @@ export async function runJestScreenshot(config: d.Config, env: d.E2EProcessEnv, 
     cacheDir: config.cacheDir,
     compareAppDir: path.join(config.sys.compiler.packageDir, 'screenshot', 'compare'),
     updateMaster: config.flags.updateScreenshot,
-    logger: config.logger
+    logger: config.logger,
+    allowableMismatchedPixels: config.testing.allowableMismatchedPixels,
+    allowableMismatchedRatio: config.testing.allowableMismatchedRatio
   });
   initTimespan.finish(`screenshot, initBuild finished`);
 

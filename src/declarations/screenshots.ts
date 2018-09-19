@@ -27,6 +27,8 @@ export interface ScreenshotConnectorOptions {
   gitIgnoreImages?: boolean;
   gitIgnoreLocal?: boolean;
   gitIgnoreCompareApp?: boolean;
+  allowableMismatchedPixels?: number;
+  allowableMismatchedRatio?: number;
 }
 
 
@@ -40,6 +42,8 @@ export interface ScreenshotBuildData {
   localDirPath: string;
   updateMaster: boolean;
   compareUrlTemplate: string;
+  allowableMismatchedPixels: number;
+  allowableMismatchedRatio: number;
 }
 
 
@@ -87,6 +91,8 @@ export interface ScreenshotCompare {
   isLandscape?: boolean;
   isMobile?: boolean;
   mediaType?: string;
+  allowableMismatchedPixels?: number;
+  allowableMismatchedRatio?: number;
 }
 
 

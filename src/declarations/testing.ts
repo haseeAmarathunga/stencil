@@ -74,10 +74,9 @@ declare global {
 
       /**
        * Used to evaluate the results of `compareScreenshot()`, such as
-       * `expect(compare).toMatchScreenshot()`. The `mismatch`
-       * value within the optional `opts` argument allows each test
-       * to provide an allowable mismatch value between `0` and `1`.
-       * Default `mismatchedPixels` option is `0.01`.
+       * `expect(compare).toMatchScreenshot()`. The `allowableMismatchedRatio`
+       * value from the testing config is used by default if
+       * `MatchScreenshotOptions` were not provided.
        */
       toMatchScreenshot(opts?: MatchScreenshotOptions): void;
     }
@@ -87,22 +86,27 @@ declare global {
 
 export interface MatchScreenshotOptions {
   /**
-   * The `mismatchedPixels` value is the total number of pixels that can be
-   * mismatched until the test fails. For example, if the value is `100`,
-   * then if there were `101` pixels that were mismatched then the test
-   * would fail. Default is to use the `mismatchedPercent` value.
+   * The `allowableMismatchedPixels` value is the total number of pixels
+   * that can be mismatched until the test fails. For example, if the value
+   * is `100`, and if there were `101` pixels that were mismatched then the
+   * test would fail. If the `allowableMismatchedRatio` is provided it will
+   * take precedence, otherwise `allowableMismatchedPixels` will be used.
    */
-  mismatchedPixels?: number;
+  allowableMismatchedPixels?: number;
 
   /**
-   * A `mismatchedRatio` value of `0` means no pixels can be mismatched, and `0.1`
-   * means 10% of the pixels can have mismatched. Realistically, two screenshots
-   * representing the same content may have a small number of mismatched
-   * pixels due to anti-aliasing, which is perfectly normal. For this reason,
-   * the default `mismatchedRatio` value is `0.01`, which means that up to 1% of the
-   * pixels are ok to be mismatched.
+   * The `allowableMismatchedRatio` value is used to determine an acceptable
+   * ratio of pixels that can be mismatched before the image is considered
+   * to have changes. Realistically, two screenshots representing the same
+   * content may have a small number of pixels that are not identical due to
+   * anti-aliasing, which is perfectly normal. The `allowableMismatchedRatio`
+   * is the number of pixels that were mismatched, divided by the total number
+   * of pixels in the screenshot. For example, a ratio value of `0.06` means
+   * 6% of the pixels can be mismatched before the image is considered to
+   * have changes. If the `allowableMismatchedRatio` is provided it will
+   * take precedence, otherwise `allowableMismatchedPixels` will be used.
    */
-  mismatchedRatio?: number;
+  allowableMismatchedRatio?: number;
 }
 
 
@@ -181,6 +185,29 @@ export interface Testing {
 
 
 export interface TestingConfig {
+  /**
+   * The `allowableMismatchedPixels` value is used to determine an acceptable
+   * number of pixels that can be mismatched before the image is considered
+   * to have changes. Realistically, two screenshots representing the same
+   * content may have a small number of pixels that are not identical due to
+   * anti-aliasing, which is perfectly normal.
+   */
+  allowableMismatchedPixels?: number;
+
+  /**
+   * The `allowableMismatchedRatio` value is used to determine an acceptable
+   * ratio of pixels that can be mismatched before the image is considered
+   * to have changes. Realistically, two screenshots representing the same
+   * content may have a small number of pixels that are not identical due to
+   * anti-aliasing, which is perfectly normal. The `allowableMismatchedRatio`
+   * is the number of pixels that were mismatched, divided by the total number
+   * of pixels in the screenshot. For example, a ratio value of `0.06` means
+   * 6% of the pixels can be mismatched before the image is considered to
+   * have changes.
+   */
+  allowableMismatchedRatio?: number;
+
+
   /**
    * Additional arguments to pass to the browser instance.
    */

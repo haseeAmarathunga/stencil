@@ -5,10 +5,10 @@ import crypto from 'crypto';
 import path from 'path';
 
 
-export async function compareScreenshot(emulateConfig: d.EmulateConfig, screenshotBuild: d.ScreenshotBuildData, screenshotBuf: Buffer, uniqueDescription: string, threshold: number) {
+export async function compareScreenshot(emulateConfig: d.EmulateConfig, screenshotBuildData: d.ScreenshotBuildData, screenshotBuf: Buffer, uniqueDescription: string, threshold: number) {
   const hash = crypto.createHash('md5').update(screenshotBuf).digest('hex');
   const localImageName = `${hash}.png`;
-  const imagePath = path.join(screenshotBuild.imagesDirPath, localImageName);
+  const imagePath = path.join(screenshotBuildData.imagesDirPath, localImageName);
 
   // create the data we'll be saving as json
   // the "id" is what we use as a key to compare to sets of data
@@ -33,7 +33,7 @@ export async function compareScreenshot(emulateConfig: d.EmulateConfig, screensh
 
   // write the local build data
   await Promise.all([
-    writeScreenshotData(screenshotBuild.localDirPath, localData),
+    writeScreenshotData(screenshotBuildData.localDirPath, localData),
     writeScreenshotImage(imagePath, screenshotBuf)
   ]);
 
@@ -56,20 +56,22 @@ export async function compareScreenshot(emulateConfig: d.EmulateConfig, screensh
     hasTouch: emulateConfig.hasTouch,
     isLandscape: emulateConfig.isLandscape,
     isMobile: emulateConfig.isMobile,
-    mediaType: emulateConfig.mediaType
+    mediaType: emulateConfig.mediaType,
+    allowableMismatchedPixels: screenshotBuildData.allowableMismatchedPixels,
+    allowableMismatchedRatio: screenshotBuildData.allowableMismatchedRatio
   };
 
-  if (screenshotBuild.updateMaster) {
+  if (screenshotBuildData.updateMaster) {
     // this data is going to become the master data
     // so no need to compare with previous versions
-    await writeScreenshotData(screenshotBuild.masterDirPath, localData);
+    await writeScreenshotData(screenshotBuildData.masterDirPath, localData);
     return compare;
   }
 
-  const masterData = await readScreenshotData(screenshotBuild.masterDirPath, localData.id);
+  const masterData = await readScreenshotData(screenshotBuildData.masterDirPath, localData.id);
   if (!masterData) {
     // there is no master data so nothing to compare it with
-    await writeScreenshotData(screenshotBuild.masterDirPath, localData);
+    await writeScreenshotData(screenshotBuildData.masterDirPath, localData);
     return compare;
   }
 
@@ -81,8 +83,8 @@ export async function compareScreenshot(emulateConfig: d.EmulateConfig, screensh
     // compare the two images pixel by pixel to
     // figure out a mismatch value
     compare.mismatchedPixels = await getMismatchedPixels(
-      screenshotBuild.cacheDir,
-      screenshotBuild.imagesDirPath,
+      screenshotBuildData.cacheDir,
+      screenshotBuildData.imagesDirPath,
       compare.expectedImage,
       compare.receivedImage,
       compare.physicalWidth,

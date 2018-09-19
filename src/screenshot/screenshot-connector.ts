@@ -25,6 +25,8 @@ export class ScreenshotConnector implements d.ScreenshotConnector {
   private compareUrl: string;
   private masterBuild: d.ScreenshotBuild;
   private localBuild: d.ScreenshotBuild;
+  private allowableMismatchedRatio: number;
+  private allowableMismatchedPixels: number;
 
   async initBuild(opts: d.ScreenshotConnectorOptions) {
     this.logger = opts.logger;
@@ -35,8 +37,11 @@ export class ScreenshotConnector implements d.ScreenshotConnector {
     this.rootDir = opts.rootDir;
     this.compareAppDir = opts.compareAppDir;
     this.updateMaster = !!opts.updateMaster;
+    this.allowableMismatchedRatio = opts.allowableMismatchedRatio;
+    this.allowableMismatchedPixels = opts.allowableMismatchedPixels;
 
-    this.logger.debug(`screenshot build: ${this.buildId}, ${this.buildMessage}, update master: ${this.updateMaster}`);
+    this.logger.debug(`screenshot build: ${this.buildId}, ${this.buildMessage}, updateMaster: ${this.updateMaster}`);
+    this.logger.debug(`screenshot compare, allowableMismatchedPixels: ${this.allowableMismatchedPixels}, allowableMismatchedRatio: ${this.allowableMismatchedRatio}`);
 
     if (typeof opts.screenshotDirName === 'string') {
       this.screenshotDirName = opts.screenshotDirName;
@@ -190,7 +195,9 @@ export class ScreenshotConnector implements d.ScreenshotConnector {
       masterDirPath: this.masterDir,
       localDirPath: this.localDir,
       updateMaster: this.updateMaster,
-      compareUrlTemplate: this.compareUrl
+      compareUrlTemplate: this.compareUrl,
+      allowableMismatchedPixels: this.allowableMismatchedPixels,
+      allowableMismatchedRatio: this.allowableMismatchedRatio
     };
 
     return JSON.stringify(screenshotBuild);
@@ -242,12 +249,15 @@ function sortScreenshots(screenshots: d.ScreenshotData[]) {
     }
 
     if (a.userAgent && b.userAgent) {
-      if (a.userAgent < b.userAgent) return -1;
-      if (a.userAgent > b.userAgent) return 1;
+      if (a.userAgent.toLowerCase() < b.userAgent.toLowerCase()) return -1;
+      if (a.userAgent.toLowerCase() > b.userAgent.toLowerCase()) return 1;
     }
 
     if (a.width < b.width) return -1;
     if (a.width > b.width) return 1;
+
+    if (a.height < b.height) return -1;
+    if (a.height > b.height) return 1;
 
     if (a.id < b.id) return -1;
     if (a.id > b.id) return 1;

@@ -16,29 +16,39 @@ export function toMatchScreenshot(compare: d.ScreenshotCompare, opts: d.MatchScr
 
   const device = compare.device || compare.userAgent;
 
-  if (typeof opts.mismatchedPixels === 'number') {
-    if (opts.mismatchedPixels < 0) {
-      throw new Error(`expect toMatchScreenshot() mismatchedPixels value must be a value of 0 or greater`);
+  if (typeof opts.allowableMismatchedRatio === 'number') {
+    if (opts.allowableMismatchedRatio < 0 || opts.allowableMismatchedRatio > 1) {
+      throw new Error(`expect toMatchScreenshot() allowableMismatchedRatio value must be a value between 0 and 1`);
     }
-
     return {
-      message: () => `${device}: screenshot has "${compare.mismatchedPixels}" mismatched pixels for "${compare.desc}", but expect less than "${opts.mismatchedPixels}" mismatched pixels`,
-      pass: (compare.mismatchedPixels < opts.mismatchedPixels),
+      message: () => `${device}: screenshot has a mismatch ratio of "${compare.mismatchedRatio}" for "${compare.desc}", but expected ratio to be less than "${opts.allowableMismatchedRatio}"`,
+      pass: (compare.mismatchedRatio < opts.allowableMismatchedRatio),
     };
   }
 
-  if (typeof opts.mismatchedRatio === 'number') {
-    if (opts.mismatchedRatio < 0 || opts.mismatchedRatio > 1) {
-      throw new Error(`expect toMatchScreenshot() mismatchedRatio value must be a value between 0 and 1`);
+  if (typeof opts.allowableMismatchedPixels === 'number') {
+    if (opts.allowableMismatchedPixels < 0) {
+      throw new Error(`expect toMatchScreenshot() allowableMismatchedPixels value must be a value of 0 or greater`);
     }
-  } else {
-    opts.mismatchedRatio = DEFAULT_MISMATCHED_PIXELS;
+    return {
+      message: () => `${device}: screenshot has "${compare.mismatchedPixels}" mismatched pixels for "${compare.desc}", but expected less than "${opts.allowableMismatchedPixels}" mismatched pixels`,
+      pass: (compare.mismatchedPixels < opts.allowableMismatchedPixels),
+    };
   }
 
-  return {
-    message: () => `${device}: screenshot has a mismatch ratio of "${compare.mismatchedRatio}" for "${compare.desc}", but expected ratio to be less than "${opts.mismatchedRatio}"`,
-    pass: (compare.mismatchedRatio < opts.mismatchedRatio),
-  };
-}
+  if (typeof compare.allowableMismatchedRatio === 'number') {
+    return {
+      message: () => `${device}: screenshot has a mismatch ratio of "${compare.mismatchedRatio}" for "${compare.desc}", but expected ratio to be less than "${compare.allowableMismatchedRatio}"`,
+      pass: (compare.mismatchedRatio < compare.allowableMismatchedRatio),
+    };
+  }
 
-const DEFAULT_MISMATCHED_PIXELS = 0.01;
+  if (typeof compare.allowableMismatchedPixels === 'number') {
+    return {
+      message: () => `${device}: screenshot has "${compare.mismatchedPixels}" mismatched pixels for "${compare.desc}", but expected less than "${compare.allowableMismatchedPixels}" mismatched pixels`,
+      pass: (compare.mismatchedPixels < compare.allowableMismatchedPixels),
+    };
+  }
+
+  throw new Error(`expect toMatchScreenshot() missing allowableMismatchedPixels in testing config`);
+}

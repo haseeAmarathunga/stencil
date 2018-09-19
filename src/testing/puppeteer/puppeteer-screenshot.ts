@@ -38,9 +38,9 @@ export async function compareE2EScreenshot(page: pd.E2EPageInternal, uniqueDescr
 
   const emulateConfig = JSON.parse(env.__STENCIL_EMULATE__) as d.EmulateConfig;
 
-  const screenshotBuild = JSON.parse(env.__STENCIL_SCREENSHOT_BUILD__) as d.ScreenshotBuildData;
+  const screenshotBuildData = JSON.parse(env.__STENCIL_SCREENSHOT_BUILD__) as d.ScreenshotBuildData;
 
-  return compareScreenshot(emulateConfig, screenshotBuild, screenshotBuf, uniqueDescription, opts.threshold);
+  return compareScreenshot(emulateConfig, screenshotBuildData, screenshotBuf, uniqueDescription, opts.threshold);
 }
 
 

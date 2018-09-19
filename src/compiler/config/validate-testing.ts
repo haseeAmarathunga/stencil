@@ -88,6 +88,15 @@ export function validateTesting(config: d.Config) {
     );
   }
 
+  if (typeof testing.allowableMismatchedPixels === 'number') {
+    if (testing.allowableMismatchedPixels < 0) {
+      throw new Error(`allowableMismatchedPixels must be a value this is 0 or greater`);
+    }
+
+  } else {
+    testing.allowableMismatchedPixels = DEFAULT_ALLOWABLE_MISMATCHED_PIXELS;
+  }
+
   if (Array.isArray(testing.testMatch)) {
     delete testing.testRegex;
 
@@ -138,3 +147,6 @@ const DEFAULT_IGNORE_PATTERNS = [
   '.stencil',
   'node_modules',
 ];
+
+
+const DEFAULT_ALLOWABLE_MISMATCHED_PIXELS = 100;
