@@ -85,7 +85,7 @@ export class E2EElement extends MockElement implements pd.E2EElementInternal {
     return isVisible as boolean;
   }
 
-  waitUntilVisible() {
+  waitForVisible() {
     return new Promise<void>((resolve, reject) => {
       let resolveTmr: any;
 
@@ -100,7 +100,7 @@ export class E2EElement extends MockElement implements pd.E2EElementInternal {
           clearTimeout(rejectTmr);
           resolve();
         } else {
-          resolveTmr = setTimeout(checkVisible);
+          resolveTmr = setTimeout(checkVisible, 10);
         }
       };
 

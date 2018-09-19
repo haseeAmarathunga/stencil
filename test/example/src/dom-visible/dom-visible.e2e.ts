@@ -19,14 +19,14 @@ describe('dom visible e2e tests', () => {
     expect(isVisible).toBe(true);
   });
 
-  it('isVisible()', async () => {
+  it('waitForVisible()', async () => {
     const page = await newE2EPage({ html: `
       <dom-visible></dom-visible>
     `});
 
     const article = await page.find('article');
 
-    const untilVisible = article.waitUntilVisible();
+    const untilVisible = article.waitForVisible();
 
     let isVisible = await article.isVisible();
     expect(isVisible).toBe(false);

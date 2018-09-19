@@ -219,7 +219,7 @@ export interface E2EElement {
   isIntersectingViewport(): Promise<boolean>;
 
   /**
-   * Resolves `true` when the element's style `display !== 'none'`,
+   * Resolves `true` when the element's style is `display !== 'none'`,
    * `visibility !== 'hidden'` and `opacity !== '0'`.
    */
   isVisible(): Promise<boolean>;
@@ -332,10 +332,10 @@ export interface E2EElement {
   type(text: string, options?: { delay: number }): Promise<void>;
 
   /**
-   * Resolves when the element's style `display !== 'none'`,
+   * Waits until the element's style is `display !== 'none'`,
    * `visibility !== 'hidden'` and `opacity !== '0'`.
    */
-  waitUntilVisible(): Promise<void>;
+  waitForVisible(): Promise<void>;
 }
 
 
