@@ -219,6 +219,12 @@ export interface E2EElement {
   isIntersectingViewport(): Promise<boolean>;
 
   /**
+   * Resolves `true` when the element's style `display !== 'none'`,
+   * `visibility !== 'hidden'` and `opacity !== '0'`.
+   */
+  isVisible(): Promise<boolean>;
+
+  /**
    * Node name of the node, which in an element's case is the tag name.
    * Note, this will always be upper-cased.
    */
@@ -324,6 +330,12 @@ export interface E2EElement {
    * To press a special key, like Control or ArrowDown, use `keyboard.press`.
    */
   type(text: string, options?: { delay: number }): Promise<void>;
+
+  /**
+   * Resolves when the element's style `display !== 'none'`,
+   * `visibility !== 'hidden'` and `opacity !== '0'`.
+   */
+  waitUntilVisible(): Promise<void>;
 }
 
 
