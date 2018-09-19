@@ -18,7 +18,7 @@ export function toMatchScreenshot(compare: d.ScreenshotCompare, opts: d.MatchScr
 
   if (typeof opts.allowableMismatchedRatio === 'number') {
     if (opts.allowableMismatchedRatio < 0 || opts.allowableMismatchedRatio > 1) {
-      throw new Error(`expect toMatchScreenshot() allowableMismatchedRatio value must be a value between 0 and 1`);
+      throw new Error(`expect toMatchScreenshot() allowableMismatchedRatio must be a value ranging from 0 to 1`);
     }
     return {
       message: () => `${device}: screenshot has a mismatch ratio of "${compare.mismatchedRatio}" for "${compare.desc}", but expected ratio to be less than "${opts.allowableMismatchedRatio}"`,
@@ -28,7 +28,7 @@ export function toMatchScreenshot(compare: d.ScreenshotCompare, opts: d.MatchScr
 
   if (typeof opts.allowableMismatchedPixels === 'number') {
     if (opts.allowableMismatchedPixels < 0) {
-      throw new Error(`expect toMatchScreenshot() allowableMismatchedPixels value must be a value of 0 or greater`);
+      throw new Error(`expect toMatchScreenshot() allowableMismatchedPixels value must be a value that is 0 or greater`);
     }
     return {
       message: () => `${device}: screenshot has "${compare.mismatchedPixels}" mismatched pixels for "${compare.desc}", but expected less than "${opts.allowableMismatchedPixels}" mismatched pixels`,

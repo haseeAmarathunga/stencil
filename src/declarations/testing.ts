@@ -95,16 +95,17 @@ export interface MatchScreenshotOptions {
   allowableMismatchedPixels?: number;
 
   /**
-   * The `allowableMismatchedRatio` value is used to determine an acceptable
-   * ratio of pixels that can be mismatched before the image is considered
-   * to have changes. Realistically, two screenshots representing the same
-   * content may have a small number of pixels that are not identical due to
-   * anti-aliasing, which is perfectly normal. The `allowableMismatchedRatio`
-   * is the number of pixels that were mismatched, divided by the total number
-   * of pixels in the screenshot. For example, a ratio value of `0.06` means
-   * 6% of the pixels can be mismatched before the image is considered to
-   * have changes. If the `allowableMismatchedRatio` is provided it will
-   * take precedence, otherwise `allowableMismatchedPixels` will be used.
+   * The `allowableMismatchedRatio` ranges from `0` to `1` and is used to
+   * determine an acceptable ratio of pixels that can be mismatched before
+   * the image is considered to have changes. Realistically, two screenshots
+   * representing the same content may have a small number of pixels that
+   * are not identical due to anti-aliasing, which is perfectly normal. The
+   * `allowableMismatchedRatio` is the number of pixels that were mismatched,
+   * divided by the total number of pixels in the screenshot. For example,
+   * a ratio value of `0.06` means 6% of the pixels can be mismatched before
+   * the image is considered to have changes. If the `allowableMismatchedRatio`
+   * is provided it will take precedence, otherwise `allowableMismatchedPixels`
+   * will be used.
    */
   allowableMismatchedRatio?: number;
 }
@@ -190,23 +191,33 @@ export interface TestingConfig {
    * number of pixels that can be mismatched before the image is considered
    * to have changes. Realistically, two screenshots representing the same
    * content may have a small number of pixels that are not identical due to
-   * anti-aliasing, which is perfectly normal.
+   * anti-aliasing, which is perfectly normal. If the `allowableMismatchedRatio`
+   * is provided it will take precedence, otherwise `allowableMismatchedPixels`
+   * will be used.
    */
   allowableMismatchedPixels?: number;
 
   /**
-   * The `allowableMismatchedRatio` value is used to determine an acceptable
-   * ratio of pixels that can be mismatched before the image is considered
-   * to have changes. Realistically, two screenshots representing the same
-   * content may have a small number of pixels that are not identical due to
-   * anti-aliasing, which is perfectly normal. The `allowableMismatchedRatio`
-   * is the number of pixels that were mismatched, divided by the total number
-   * of pixels in the screenshot. For example, a ratio value of `0.06` means
-   * 6% of the pixels can be mismatched before the image is considered to
-   * have changes.
+   * The `allowableMismatchedRatio` ranges from `0` to `1` and is used to
+   * determine an acceptable ratio of pixels that can be mismatched before
+   * the image is considered to have changes. Realistically, two screenshots
+   * representing the same content may have a small number of pixels that
+   * are not identical due to anti-aliasing, which is perfectly normal. The
+   * `allowableMismatchedRatio` is the number of pixels that were mismatched,
+   * divided by the total number of pixels in the screenshot. For example,
+   * a ratio value of `0.06` means 6% of the pixels can be mismatched before
+   * the image is considered to have changes. If the `allowableMismatchedRatio`
+   * is provided it will take precedence, otherwise `allowableMismatchedPixels`
+   * will be used.
    */
   allowableMismatchedRatio?: number;
 
+  /**
+   * Matching threshold while comparing two screenshots. Value ranges from `0` to `1`.
+   * Smaller values make the comparison more sensitive. The `pixelmatchThreshold`
+   * value helps to ignore anti-aliasing. Default: `0.1`
+   */
+  pixelmatchThreshold?: number;
 
   /**
    * Additional arguments to pass to the browser instance.
@@ -414,33 +425,4 @@ export interface EmulateConfig {
    * Changes the CSS media type of the page. The only allowed values are 'screen', 'print' and null. Passing null disables media emulation.
    */
   mediaType?: 'screen' | 'print';
-}
-
-
-export interface E2EScreenshotOptions {
-  /**
-   * When true, takes a screenshot of the full scrollable page.
-   * @default false
-   */
-  fullPage?: boolean;
-
-  /**
-   * Hides default white background and allows capturing screenshots with transparency.
-   * @default false
-   */
-  omitBackground?: boolean;
-
-  /**
-   * An object which specifies clipping region of the page.
-   */
-  clip?: {
-    /** The x-coordinate of top-left corner. */
-    x: number;
-    /** The y-coordinate of top-left corner. */
-    y: number;
-    /** The width. */
-    width: number;
-    /** The height. */
-    height: number;
-  };
 }

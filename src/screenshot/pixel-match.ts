@@ -6,12 +6,8 @@ import { readFile, writeFile } from './screenshot-fs';
 import path from 'path';
 
 
-export async function getMismatchedPixels(cacheDir: string, imageDir: string, masterImageName: string, localImageName: string, width: number, height: number, threshold: number) {
-  if (typeof threshold !== 'number' || threshold < 0 || threshold > 1) {
-    threshold = DEFAULT_THRESHOLD;
-  }
-
-  const cacheKey = getCacheKey(masterImageName, localImageName, width, height, threshold);
+export async function getMismatchedPixels(cacheDir: string, imageDir: string, masterImageName: string, localImageName: string, width: number, height: number, pixelmatchThreshold: number) {
+  const cacheKey = getCacheKey(masterImageName, localImageName, width, height, pixelmatchThreshold);
   const diffJsonPath = path.join(cacheDir, `mismatch_${cacheKey}.json.log`);
 
   try {
@@ -27,7 +23,7 @@ export async function getMismatchedPixels(cacheDir: string, imageDir: string, ma
   ]);
 
   const mismatchedPixels = pixelmatch(images[0], images[1], null, width, height, {
-    threshold: threshold,
+    threshold: pixelmatchThreshold,
     includeAA: false
   });
 
@@ -43,14 +39,14 @@ export async function getMismatchedPixels(cacheDir: string, imageDir: string, ma
 }
 
 
-function getCacheKey(masterImageName: string, localImageName: string, width: number, height: number, threshold: number) {
+function getCacheKey(masterImageName: string, localImageName: string, width: number, height: number, pixelmatchThreshold: number) {
   const hash = crypto.createHash('md5');
 
   hash.update(masterImageName);
   hash.update(localImageName);
   hash.update(width.toString());
   hash.update(height.toString());
-  hash.update(threshold.toString());
+  hash.update(pixelmatchThreshold.toString());
 
   return hash.digest('hex').toLowerCase();
 }
@@ -66,8 +62,6 @@ function readImage(imagesDir: string, image: string) {
   });
 }
 
-
-const DEFAULT_THRESHOLD = 0.1;
 
 interface DiffData {
   mismatch: number;

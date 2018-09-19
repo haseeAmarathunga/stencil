@@ -5,7 +5,7 @@ import crypto from 'crypto';
 import path from 'path';
 
 
-export async function compareScreenshot(emulateConfig: d.EmulateConfig, screenshotBuildData: d.ScreenshotBuildData, screenshotBuf: Buffer, uniqueDescription: string, threshold: number) {
+export async function compareScreenshot(emulateConfig: d.EmulateConfig, screenshotBuildData: d.ScreenshotBuildData, screenshotBuf: Buffer, uniqueDescription: string, pixelmatchThreshold: number) {
   const hash = crypto.createHash('md5').update(screenshotBuf).digest('hex');
   const localImageName = `${hash}.png`;
   const imagePath = path.join(screenshotBuildData.imagesDirPath, localImageName);
@@ -89,7 +89,7 @@ export async function compareScreenshot(emulateConfig: d.EmulateConfig, screensh
       compare.receivedImage,
       compare.physicalWidth,
       compare.physicalHeight,
-      threshold
+      pixelmatchThreshold
     );
   }
 

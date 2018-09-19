@@ -29,6 +29,7 @@ export interface ScreenshotConnectorOptions {
   gitIgnoreCompareApp?: boolean;
   allowableMismatchedPixels?: number;
   allowableMismatchedRatio?: number;
+  pixelmatchThreshold?: number;
 }
 
 
@@ -44,6 +45,7 @@ export interface ScreenshotBuildData {
   compareUrlTemplate: string;
   allowableMismatchedPixels: number;
   allowableMismatchedRatio: number;
+  pixelmatchThreshold: number;
 }
 
 
@@ -99,7 +101,7 @@ export interface ScreenshotCompare {
 export interface ScreenshotOptions {
   /**
    * When true, takes a screenshot of the full scrollable page.
-   * @default false
+   * Default: `false`
    */
   fullPage?: boolean;
 
@@ -110,16 +112,15 @@ export interface ScreenshotOptions {
 
   /**
    * Hides default white background and allows capturing screenshots with transparency.
-   * @default false
+   * Default: `false`
    */
   omitBackground?: boolean;
 
   /**
    * Matching threshold, ranges from `0` to 1. Smaller values make the comparison
-   * more sensitive.
-   * @default 0.1
+   * more sensitive. Defaults to the testing config `pixelmatchThreshold` value;
    */
-  threshold?: number;
+  pixelmatchThreshold?: number;
 }
 
 

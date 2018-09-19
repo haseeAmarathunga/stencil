@@ -27,6 +27,7 @@ export class ScreenshotConnector implements d.ScreenshotConnector {
   private localBuild: d.ScreenshotBuild;
   private allowableMismatchedRatio: number;
   private allowableMismatchedPixels: number;
+  private pixelmatchThreshold: number;
 
   async initBuild(opts: d.ScreenshotConnectorOptions) {
     this.logger = opts.logger;
@@ -37,11 +38,12 @@ export class ScreenshotConnector implements d.ScreenshotConnector {
     this.rootDir = opts.rootDir;
     this.compareAppDir = opts.compareAppDir;
     this.updateMaster = !!opts.updateMaster;
-    this.allowableMismatchedRatio = opts.allowableMismatchedRatio;
     this.allowableMismatchedPixels = opts.allowableMismatchedPixels;
+    this.allowableMismatchedRatio = opts.allowableMismatchedRatio;
+    this.pixelmatchThreshold = opts.pixelmatchThreshold;
 
     this.logger.debug(`screenshot build: ${this.buildId}, ${this.buildMessage}, updateMaster: ${this.updateMaster}`);
-    this.logger.debug(`screenshot compare, allowableMismatchedPixels: ${this.allowableMismatchedPixels}, allowableMismatchedRatio: ${this.allowableMismatchedRatio}`);
+    this.logger.debug(`screenshot, allowableMismatchedPixels: ${this.allowableMismatchedPixels}, allowableMismatchedRatio: ${this.allowableMismatchedRatio}, pixelmatchThreshold: ${this.pixelmatchThreshold}`);
 
     if (typeof opts.screenshotDirName === 'string') {
       this.screenshotDirName = opts.screenshotDirName;
@@ -197,7 +199,8 @@ export class ScreenshotConnector implements d.ScreenshotConnector {
       updateMaster: this.updateMaster,
       compareUrlTemplate: this.compareUrl,
       allowableMismatchedPixels: this.allowableMismatchedPixels,
-      allowableMismatchedRatio: this.allowableMismatchedRatio
+      allowableMismatchedRatio: this.allowableMismatchedRatio,
+      pixelmatchThreshold: this.pixelmatchThreshold
     };
 
     return JSON.stringify(screenshotBuild);

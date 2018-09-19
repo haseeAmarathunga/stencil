@@ -40,7 +40,9 @@ export async function compareE2EScreenshot(page: pd.E2EPageInternal, uniqueDescr
 
   const screenshotBuildData = JSON.parse(env.__STENCIL_SCREENSHOT_BUILD__) as d.ScreenshotBuildData;
 
-  return compareScreenshot(emulateConfig, screenshotBuildData, screenshotBuf, uniqueDescription, opts.threshold);
+  const pixelmatchThreshold = (typeof opts.pixelmatchThreshold === 'number' ? opts.pixelmatchThreshold : screenshotBuildData.pixelmatchThreshold);
+
+  return compareScreenshot(emulateConfig, screenshotBuildData, screenshotBuf, uniqueDescription, pixelmatchThreshold);
 }
 
 

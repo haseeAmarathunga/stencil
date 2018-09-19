@@ -90,11 +90,26 @@ export function validateTesting(config: d.Config) {
 
   if (typeof testing.allowableMismatchedPixels === 'number') {
     if (testing.allowableMismatchedPixels < 0) {
-      throw new Error(`allowableMismatchedPixels must be a value this is 0 or greater`);
+      throw new Error(`allowableMismatchedPixels must be a value that is 0 or greater`);
     }
 
   } else {
     testing.allowableMismatchedPixels = DEFAULT_ALLOWABLE_MISMATCHED_PIXELS;
+  }
+
+  if (typeof testing.allowableMismatchedRatio === 'number') {
+    if (testing.allowableMismatchedRatio < 0 || testing.allowableMismatchedRatio > 1) {
+      throw new Error(`allowableMismatchedRatio must be a value ranging from 0 to 1`);
+    }
+  }
+
+  if (typeof testing.pixelmatchThreshold === 'number') {
+    if (testing.pixelmatchThreshold < 0 || testing.pixelmatchThreshold > 1) {
+      throw new Error(`pixelmatchThreshold must be a value ranging from 0 to 1`);
+    }
+
+  } else {
+    testing.pixelmatchThreshold = DEFAULT_PIXEL_MATCH_THRESHOLD;
   }
 
   if (Array.isArray(testing.testMatch)) {
@@ -150,3 +165,4 @@ const DEFAULT_IGNORE_PATTERNS = [
 
 
 const DEFAULT_ALLOWABLE_MISMATCHED_PIXELS = 100;
+const DEFAULT_PIXEL_MATCH_THRESHOLD = 0.1;
