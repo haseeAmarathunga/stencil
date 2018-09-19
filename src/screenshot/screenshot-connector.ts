@@ -6,28 +6,28 @@ import { normalizePath } from '../compiler/util';
 
 
 export class ScreenshotConnector implements d.ScreenshotConnector {
-  private screenshotDirName = 'screenshot';
-  private masterDirName = 'master';
-  private localDirName = 'local';
-  private compareAppFileName = 'compare.html';
-  private imagesDirName = 'images';
-  private logger: d.Logger;
-  private buildId: string;
-  private buildMessage: string;
-  private rootDir: string;
-  private cacheDir: string;
-  private compareAppDir: string;
-  private screenshotDir: string;
-  private masterDir: string;
-  private localDir: string;
-  private imagesDir: string;
-  private updateMaster: boolean;
-  private compareUrl: string;
-  private masterBuild: d.ScreenshotBuild;
-  private localBuild: d.ScreenshotBuild;
-  private allowableMismatchedRatio: number;
-  private allowableMismatchedPixels: number;
-  private pixelmatchThreshold: number;
+  screenshotDirName = 'screenshot';
+  masterDirName = 'master';
+  localDirName = 'local';
+  compareAppFileName = 'compare.html';
+  imagesDirName = 'images';
+  logger: d.Logger;
+  buildId: string;
+  buildMessage: string;
+  rootDir: string;
+  cacheDir: string;
+  compareAppDir: string;
+  screenshotDir: string;
+  masterDir: string;
+  localDir: string;
+  imagesDir: string;
+  updateMaster: boolean;
+  compareUrl: string;
+  masterBuild: d.ScreenshotBuild;
+  localBuild: d.ScreenshotBuild;
+  allowableMismatchedRatio: number;
+  allowableMismatchedPixels: number;
+  pixelmatchThreshold: number;
 
   async initBuild(opts: d.ScreenshotConnectorOptions) {
     this.logger = opts.logger;
@@ -88,6 +88,8 @@ export class ScreenshotConnector implements d.ScreenshotConnector {
     if (this.updateMaster) {
       this.logger.debug(`empty master: ${this.masterDir}`);
       fsTasks.push(fs.emptyDir(this.masterDir));
+    } else {
+      await this.pullMasterImages();
     }
 
     fsTasks.push(fs.emptyDir(this.localDir));
@@ -121,6 +123,8 @@ export class ScreenshotConnector implements d.ScreenshotConnector {
 
     await Promise.all(fsTasks);
   }
+
+  async pullMasterImages() {/**/}
 
   async completeBuild() {
     const masterFilePaths = (await fs.readDir(this.masterDir)).map(f => path.join(this.masterDir, f)).filter(f => f.endsWith('.json'));
@@ -163,7 +167,7 @@ export class ScreenshotConnector implements d.ScreenshotConnector {
 
       const imageFilePath = path.join(this.imagesDir, imageName);
       const imageBuf = await fs.readFileBuffer(imageFilePath);
-      const jsonpContent = `loadScreenshot("${imageName}","data:image/png;base64,${imageBuf.toString('base64')}",${screenshot.width},${screenshot.height},${screenshot.deviceScaleFactor},${screenshot.physicalWidth},${screenshot.physicalHeight});`;
+      const jsonpContent = `loadScreenshot("${imageName}","data:image/png;base64,${imageBuf.toString('base64')}",${screenshot.width},${screenshot.height},${screenshot.deviceScaleFactor},${screenshot.naturalWidth},${screenshot.naturalHeight});`;
       await fs.writeFile(jsonFilePath, jsonpContent);
     }
   }

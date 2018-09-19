@@ -65,8 +65,8 @@ export interface ScreenshotData {
   width?: number;
   height?: number;
   deviceScaleFactor?: number;
-  physicalWidth?: number;
-  physicalHeight?: number;
+  naturalWidth?: number;
+  naturalHeight?: number;
   hasTouch?: boolean;
   isLandscape?: boolean;
   isMobile?: boolean;
@@ -87,8 +87,8 @@ export interface ScreenshotCompare {
   width?: number;
   height?: number;
   deviceScaleFactor?: number;
-  physicalWidth?: number;
-  physicalHeight?: number;
+  naturalWidth?: number;
+  naturalHeight?: number;
   hasTouch?: boolean;
   isLandscape?: boolean;
   isMobile?: boolean;

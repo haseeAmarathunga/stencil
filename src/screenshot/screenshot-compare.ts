@@ -23,8 +23,8 @@ export async function compareScreenshot(emulateConfig: d.EmulateConfig, screensh
     width: emulateConfig.width,
     height: emulateConfig.height,
     deviceScaleFactor: emulateConfig.deviceScaleFactor,
-    physicalWidth: Math.round(emulateConfig.width * emulateConfig.deviceScaleFactor),
-    physicalHeight: Math.round(emulateConfig.height * emulateConfig.deviceScaleFactor),
+    naturalWidth: Math.round(emulateConfig.width * emulateConfig.deviceScaleFactor),
+    naturalHeight: Math.round(emulateConfig.height * emulateConfig.deviceScaleFactor),
     hasTouch: emulateConfig.hasTouch,
     isLandscape: emulateConfig.isLandscape,
     isMobile: emulateConfig.isMobile,
@@ -51,8 +51,8 @@ export async function compareScreenshot(emulateConfig: d.EmulateConfig, screensh
     width: emulateConfig.width,
     height: emulateConfig.height,
     deviceScaleFactor: emulateConfig.deviceScaleFactor,
-    physicalWidth: localData.physicalWidth,
-    physicalHeight: localData.physicalHeight,
+    naturalWidth: localData.naturalWidth,
+    naturalHeight: localData.naturalHeight,
     hasTouch: emulateConfig.hasTouch,
     isLandscape: emulateConfig.isLandscape,
     isMobile: emulateConfig.isMobile,
@@ -87,13 +87,13 @@ export async function compareScreenshot(emulateConfig: d.EmulateConfig, screensh
       screenshotBuildData.imagesDirPath,
       compare.expectedImage,
       compare.receivedImage,
-      compare.physicalWidth,
-      compare.physicalHeight,
+      compare.naturalWidth,
+      compare.naturalHeight,
       pixelmatchThreshold
     );
   }
 
-  compare.mismatchedRatio = (compare.mismatchedPixels / (compare.physicalWidth * compare.physicalHeight));
+  compare.mismatchedRatio = (compare.mismatchedPixels / (compare.naturalWidth * compare.naturalHeight));
 
   return compare;
 }
