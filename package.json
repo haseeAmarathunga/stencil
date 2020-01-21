@@ -59,7 +59,7 @@
     "rollup-plugin-commonjs": "9.1.5",
     "rollup-plugin-node-builtins": "2.1.2",
     "rollup-plugin-node-resolve": "3.3.0",
-    "rollup-pluginutils": "2.3.1",
+    "rollup-pluginutils": "2.3.2",
     "typescript": "~2.9.1"
   },
   "devDependencies": {
